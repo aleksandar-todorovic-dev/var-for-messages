@@ -1,0 +1,303 @@
+.verdict-card {
+  --severity: #d72638;
+  --ink: #11110f;
+  --paper: #f1eadb;
+  --paper-muted: #cfc7b8;
+  --rule: rgb(17 17 15 / 0.18);
+
+  container-type: inline-size;
+  position: relative;
+  isolation: isolate;
+  display: grid;
+  grid-template-rows: 11.5% 22.5% 10.5% 24% 17% 14.5%;
+  width: 100%;
+  aspect-ratio: 4 / 5;
+  min-width: 0;
+  overflow: hidden;
+  color: var(--ink);
+  background:
+    linear-gradient(rgb(17 17 15 / 0.025) 1px, transparent 1px),
+    var(--paper);
+  background-size: 100% 7.5cqw;
+  border: max(1px, 0.35cqw) solid rgb(241 234 219 / 0.72);
+  outline: max(1px, 0.18cqw) solid rgb(17 17 15 / 0.88);
+  box-shadow: 0 1.4rem 3.6rem rgb(0 0 0 / 0.26);
+}
+
+.verdict-card--yellow {
+  --severity: #f2c94c;
+}
+
+.verdict-card__decision-line {
+  position: absolute;
+  z-index: 4;
+  inset-block: 0;
+  left: 5.4cqw;
+  width: 0.8cqw;
+  min-width: 2px;
+  background: var(--severity);
+}
+
+.verdict-card__header,
+.verdict-card__evidence,
+.verdict-card__review,
+.verdict-card__decision,
+.verdict-card__explanation,
+.verdict-card__penalty {
+  min-width: 0;
+  min-height: 0;
+  padding-inline: 10.5cqw 4.8cqw;
+}
+
+.verdict-card__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 3cqw;
+  color: var(--paper);
+  background: var(--ink);
+}
+
+.verdict-card__eyebrow,
+.verdict-card__case,
+.verdict-card__player,
+.verdict-card__label,
+.verdict-card__decision-kicker,
+.verdict-card__penalty-label,
+.verdict-card__attribution {
+  margin: 0;
+  font-size: 2.12cqw;
+  font-weight: 800;
+  line-height: 1.05;
+  letter-spacing: 0.075em;
+  text-transform: uppercase;
+}
+
+.verdict-card__eyebrow {
+  font-size: 2.32cqw;
+}
+
+.verdict-card__case {
+  flex: 0 0 auto;
+  padding-left: 2.2cqw;
+  color: var(--paper-muted);
+  border-left: 0.65cqw solid var(--severity);
+  font-size: 1.95cqw;
+  text-align: right;
+}
+
+.verdict-card__evidence,
+.verdict-card__review,
+.verdict-card__explanation {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.verdict-card__evidence {
+  border-bottom: max(1px, 0.18cqw) solid var(--rule);
+}
+
+.verdict-card__evidence-meta {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 2.5cqw;
+  margin-bottom: 1.2cqw;
+}
+
+.verdict-card__label {
+  color: rgb(17 17 15 / 0.62);
+  font-size: 1.9cqw;
+  letter-spacing: 0.06em;
+}
+
+.verdict-card__evidence-meta .verdict-card__label {
+  flex: 0 0 auto;
+}
+
+.verdict-card__player {
+  min-width: 0;
+  overflow: hidden;
+  color: rgb(17 17 15 / 0.58);
+  font-size: 1.75cqw;
+  letter-spacing: 0.035em;
+  text-align: right;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.verdict-card__player span {
+  color: var(--ink);
+}
+
+.verdict-card__message {
+  display: -webkit-box;
+  max-width: 34ch;
+  margin: 0;
+  overflow: hidden;
+  font-size: 5.9cqw;
+  font-weight: 760;
+  line-height: 1.02;
+  letter-spacing: -0.035em;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+}
+
+.verdict-card--message-medium .verdict-card__message {
+  font-size: 4.75cqw;
+  line-height: 1.04;
+  -webkit-line-clamp: 4;
+}
+
+.verdict-card--message-long .verdict-card__message {
+  font-size: 3.7cqw;
+  line-height: 1.08;
+  -webkit-line-clamp: 6;
+}
+
+.verdict-card__review {
+  background: rgb(17 17 15 / 0.035);
+}
+
+.verdict-card__review .verdict-card__label {
+  margin-bottom: 0.75cqw;
+}
+
+.verdict-card__review-copy {
+  max-width: 42ch;
+  margin: 0;
+  font-size: 2.72cqw;
+  font-weight: 720;
+  line-height: 1.18;
+}
+
+.verdict-card__decision {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  color: var(--paper);
+  background: var(--ink);
+}
+
+.verdict-card__severity-mark {
+  position: absolute;
+  z-index: 5;
+  top: 50%;
+  left: calc(5.8cqw - 2.45cqw);
+  display: grid;
+  place-items: center;
+  width: 4.9cqw;
+  aspect-ratio: 0.68;
+  background: var(--severity);
+  border: max(1px, 0.34cqw) solid var(--paper);
+  transform: translateY(-50%) rotate(-2deg);
+}
+
+.verdict-card--yellow .verdict-card__severity-mark {
+  border-color: var(--ink);
+}
+
+.verdict-card__severity-lock {
+  width: 0.82cqw;
+  height: 64%;
+  min-width: 2px;
+  background: var(--ink);
+  opacity: 0.88;
+}
+
+.verdict-card--yellow .verdict-card__severity-lock {
+  background: var(--paper);
+}
+
+.verdict-card__decision-kicker {
+  margin-bottom: 1.05cqw;
+  color: var(--severity);
+  font-size: 1.95cqw;
+}
+
+.verdict-card__sanction {
+  margin: 0;
+  font-family:
+    Impact, Haettenschweiler, "Arial Narrow Bold", sans-serif;
+  font-size: 8.25cqw;
+  font-weight: 900;
+  line-height: 0.83;
+  letter-spacing: -0.025em;
+  text-transform: uppercase;
+}
+
+.verdict-card__offense {
+  max-width: 34ch;
+  margin: 1.4cqw 0 0;
+  color: var(--severity);
+  font-size: 3.2cqw;
+  font-weight: 850;
+  line-height: 1.04;
+  letter-spacing: 0.015em;
+  text-transform: uppercase;
+}
+
+.verdict-card__explanation {
+  border-bottom: max(1px, 0.18cqw) solid var(--rule);
+}
+
+.verdict-card__explanation .verdict-card__label {
+  margin-bottom: 0.8cqw;
+}
+
+.verdict-card__explanation-copy {
+  display: -webkit-box;
+  max-width: 46ch;
+  margin: 0;
+  overflow: hidden;
+  font-size: 2.64cqw;
+  font-weight: 650;
+  line-height: 1.22;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 4;
+}
+
+.verdict-card__penalty {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  color: var(--paper);
+  background: var(--ink);
+}
+
+.verdict-card__penalty-label {
+  margin-bottom: 0.75cqw;
+  color: var(--severity);
+  font-size: 1.9cqw;
+}
+
+.verdict-card__penalty-copy {
+  display: -webkit-box;
+  max-width: 44ch;
+  margin: 0;
+  overflow: hidden;
+  padding-right: 9cqw;
+  font-size: 2.38cqw;
+  font-weight: 700;
+  line-height: 1.18;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+}
+
+.verdict-card__attribution {
+  position: absolute;
+  right: 4.8cqw;
+  bottom: 2.1cqw;
+  color: var(--paper-muted);
+  font-size: 1.32cqw;
+  letter-spacing: 0.055em;
+}
+
+@media (max-width: 360px) {
+  .verdict-card {
+    box-shadow: 0 1rem 2.5rem rgb(0 0 0 / 0.24);
+  }
+}
