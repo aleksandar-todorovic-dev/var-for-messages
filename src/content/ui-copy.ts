@@ -3,6 +3,11 @@ import type { UiCopy } from './content-types'
 
 export const srUiCopy = {
   languageLabel: 'Jezik',
+  creatorKicker: 'VAR za poruke',
+  demoLabel: 'Primer presude',
+  newIncidentLabel: 'Novi incident',
+  formHeadline: 'Pošalji poruku na pregled.',
+
   headline: 'Poruka ide na VAR proveru.',
   supportingText: 'Ubaci poruku. Dobij presudu. Pošalji je igraču.',
 
@@ -17,6 +22,7 @@ export const srUiCopy = {
 
   suggestionPrefix: 'VAR sumnja na:',
   changeIncident: 'Promeni incident',
+  confirmIncident: 'Izaberi incident',
   categoryPrompt: 'Šta VAR treba da pregleda?',
 
   reviewingStatuses: [
@@ -59,6 +65,11 @@ export const srUiCopy = {
 
 export const enUiCopy = {
   languageLabel: 'Language',
+  creatorKicker: 'VAR for messages',
+  demoLabel: 'Example ruling',
+  newIncidentLabel: 'New incident',
+  formHeadline: 'Send the message to review.',
+
   headline: 'Put the message under review.',
   supportingText:
     'Drop in a message. Get the ruling. Send it back to the player.',
@@ -74,6 +85,7 @@ export const enUiCopy = {
 
   suggestionPrefix: 'VAR suspects:',
   changeIncident: 'Change incident',
+  confirmIncident: 'Choose incident',
   categoryPrompt: 'What should VAR review?',
 
   reviewingStatuses: [

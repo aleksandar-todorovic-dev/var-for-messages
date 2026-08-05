@@ -7,13 +7,6 @@ import './verdict-card.css'
 
 export type VerdictSeverity = LaunchSeverity
 
-export type DisplayFontId =
-  | 'barlow-condensed'
-  | 'oswald'
-  | 'roboto-condensed'
-
-export type TextFontId = 'inter' | 'roboto'
-
 export type VerdictCardContent = {
   message: string
   reviewLine: string
@@ -28,8 +21,6 @@ export type VerdictCardContent = {
 }
 
 type VerdictCardProps = VerdictCardContent & {
-  displayFont?: DisplayFontId
-  textFont?: TextFontId
   exportMode?: boolean
 }
 
@@ -64,8 +55,6 @@ export function VerdictCard({
   severity,
   playerName,
   locale = 'sr',
-  displayFont = 'barlow-condensed',
-  textFont = 'inter',
   exportMode = false,
 }: VerdictCardProps) {
   const messageSize = getMessageSize(message)
@@ -78,8 +67,6 @@ export function VerdictCard({
         'verdict-card',
         `verdict-card--${severity}`,
         `verdict-card--message-${messageSize}`,
-        `verdict-card--display-${displayFont}`,
-        `verdict-card--text-${textFont}`,
         exportMode ? 'verdict-card--export' : '',
       ]
         .filter(Boolean)
@@ -90,7 +77,9 @@ export function VerdictCard({
       <div className="verdict-card__decision-line" aria-hidden="true" />
 
       <header className="verdict-card__header">
-        <p className="verdict-card__eyebrow">{copy.reviewLabel}</p>
+        <p className="verdict-card__eyebrow">
+          {copy.reviewLabel}
+        </p>
         <p className="verdict-card__case">
           {copy.caseLabel} {caseId}
         </p>
@@ -98,7 +87,9 @@ export function VerdictCard({
 
       <section className="verdict-card__evidence">
         <div className="verdict-card__evidence-meta">
-          <p className="verdict-card__label">{copy.evidenceLabel}</p>
+          <p className="verdict-card__label">
+            {copy.evidenceLabel}
+          </p>
           {playerName ? (
             <p className="verdict-card__player">
               {copy.playerLabel}: <span>{playerName}</span>
@@ -114,33 +105,52 @@ export function VerdictCard({
       </section>
 
       <section className="verdict-card__review">
-        <p className="verdict-card__label">{copy.reviewCheckLabel}</p>
-        <p className="verdict-card__review-copy">{reviewLine}</p>
+        <p className="verdict-card__label">
+          {copy.reviewCheckLabel}
+        </p>
+        <p className="verdict-card__review-copy">
+          {reviewLine}
+        </p>
       </section>
 
       <section className="verdict-card__decision">
-        <span className="verdict-card__severity-mark" aria-hidden="true">
+        <span
+          className="verdict-card__severity-mark"
+          aria-hidden="true"
+        >
           <span className="verdict-card__severity-lock" />
         </span>
 
         <p className="verdict-card__decision-kicker">
           {copy.finalDecisionLabel}
         </p>
-        <h2 className="verdict-card__sanction">{sanction}</h2>
-        <p className="verdict-card__offense">{offense}</p>
+        <h2 className="verdict-card__sanction">
+          {sanction}
+        </h2>
+        <p className="verdict-card__offense">
+          {offense}
+        </p>
       </section>
 
       <section className="verdict-card__explanation">
-        <p className="verdict-card__label">{copy.explanationLabel}</p>
-        <p className="verdict-card__explanation-copy">{explanation}</p>
+        <p className="verdict-card__label">
+          {copy.explanationLabel}
+        </p>
+        <p className="verdict-card__explanation-copy">
+          {explanation}
+        </p>
       </section>
 
       <footer className="verdict-card__penalty">
         <p className="verdict-card__penalty-label">
           {copy.penaltyLabel}
         </p>
-        <p className="verdict-card__penalty-copy">{penalty}</p>
-        <p className="verdict-card__attribution">VAR for Messages</p>
+        <p className="verdict-card__penalty-copy">
+          {penalty}
+        </p>
+        <p className="verdict-card__attribution">
+          VAR for Messages
+        </p>
       </footer>
     </article>
   )

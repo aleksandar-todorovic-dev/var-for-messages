@@ -30,6 +30,11 @@ export type VerdictVariant = {
 
 export type UiCopy = {
   languageLabel: string
+  creatorKicker: string
+  demoLabel: string
+  newIncidentLabel: string
+  formHeadline: string
+
   headline: string
   supportingText: string
 
@@ -42,6 +47,7 @@ export type UiCopy = {
 
   suggestionPrefix: string
   changeIncident: string
+  confirmIncident: string
   categoryPrompt: string
 
   reviewingStatuses: readonly [string, string, string]

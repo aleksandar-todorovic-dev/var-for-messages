@@ -4,8 +4,6 @@
   --paper: #f1eadb;
   --paper-muted: #cfc7b8;
   --rule: rgb(17 17 15 / 0.18);
-  --font-display: "Barlow Condensed", sans-serif;
-  --font-text: Inter, sans-serif;
 
   container-type: inline-size;
   position: relative;
@@ -24,31 +22,11 @@
   border: max(1px, 0.35cqw) solid rgb(241 234 219 / 0.72);
   outline: max(1px, 0.18cqw) solid rgb(17 17 15 / 0.88);
   box-shadow: 0 1.4rem 3.6rem rgb(0 0 0 / 0.26);
-  font-family: var(--font-text);
+  font-family: Inter, sans-serif;
 }
 
 .verdict-card--yellow {
   --severity: #f2c94c;
-}
-
-.verdict-card--display-barlow-condensed {
-  --font-display: "Barlow Condensed", sans-serif;
-}
-
-.verdict-card--display-oswald {
-  --font-display: Oswald, sans-serif;
-}
-
-.verdict-card--display-roboto-condensed {
-  --font-display: "Roboto Condensed", sans-serif;
-}
-
-.verdict-card--text-inter {
-  --font-text: Inter, sans-serif;
-}
-
-.verdict-card--text-roboto {
-  --font-text: Roboto, sans-serif;
 }
 
 .verdict-card--export {
@@ -249,17 +227,12 @@
 
 .verdict-card__sanction {
   margin: 0;
-  font-family: var(--font-display);
+  font-family: "Barlow Condensed", sans-serif;
   font-size: 8.25cqw;
   font-weight: 900;
   line-height: 0.83;
   letter-spacing: -0.025em;
   text-transform: uppercase;
-}
-
-.verdict-card--display-oswald .verdict-card__sanction {
-  font-weight: 700;
-  letter-spacing: -0.04em;
 }
 
 .verdict-card__offense {
