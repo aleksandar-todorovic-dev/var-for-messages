@@ -22,7 +22,7 @@ type CreatorFormProps = {
   creator: CreatorState
   categories: readonly CategoryDefinition[]
   copy: UiCopy
-  preparedVariantId?: string
+  focusMessageOnMount: boolean
   onMessageChange: (message: string) => void
   onPlayerNameChange: (playerName: string) => void
   onCategoryChange: (
@@ -35,7 +35,7 @@ export function CreatorForm({
   creator,
   categories,
   copy,
-  preparedVariantId,
+  focusMessageOnMount,
   onMessageChange,
   onPlayerNameChange,
   onCategoryChange,
@@ -81,7 +81,10 @@ export function CreatorForm({
       noValidate
       onSubmit={handleSubmit}
     >
-      <div className="creator-form__decision-line" aria-hidden="true" />
+      <div
+        className="creator-form__decision-line"
+        aria-hidden="true"
+      />
 
       <div className="creator-field">
         <div className="creator-field__header">
@@ -102,6 +105,7 @@ export function CreatorForm({
         <textarea
           id="incident-message"
           ref={messageRef}
+          autoFocus={focusMessageOnMount}
           rows={5}
           value={creator.message}
           placeholder={copy.messagePlaceholder}
@@ -176,22 +180,21 @@ export function CreatorForm({
       />
 
       <div className="creator-form__closing">
-        <p className="creator-form__privacy" id="privacy-note">
+        <p
+          className="creator-form__privacy"
+          id="privacy-note"
+        >
           {copy.privacyNote}
         </p>
 
-        <button className="creator-form__submit" type="submit">
+        <button
+          className="creator-form__submit"
+          type="submit"
+        >
           <span>{copy.reviewButton}</span>
           <span aria-hidden="true">→</span>
         </button>
       </div>
-
-      {preparedVariantId ? (
-        <p className="creator-runtime-check" aria-live="polite">
-          Runtime check · verdict bundle prepared ·{' '}
-          <code>{preparedVariantId}</code>
-        </p>
-      ) : null}
     </form>
   )
 }

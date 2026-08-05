@@ -1,12 +1,14 @@
 import { useEffect, useReducer } from 'react'
 import { getUiCopy } from '../content'
+import { suggestCategory } from '../features/category-suggestion/suggest-category'
 import { CreatorView } from '../features/creator/CreatorView'
 import {
   hasCreatorErrors,
   validateCreator,
 } from '../features/creator/validate-creator'
-import { suggestCategory } from '../features/category-suggestion/suggest-category'
+import { ReviewSequence } from '../features/review-sequence/ReviewSequence'
 import { generateVerdict } from '../features/verdict/select-verdict'
+import { VerdictView } from '../features/verdict/VerdictView'
 import type {
   IncidentCategoryId,
   Locale,
@@ -29,7 +31,13 @@ function App() {
     () => createInitialAppState(getInitialLocale()),
   )
 
-  const { creator, preparedVerdict, session } = state
+  const {
+    view,
+    creator,
+    creatorEntryFocus,
+    generatedVerdict,
+    session,
+  } = state
   const copy = getUiCopy(creator.locale)
 
   useEffect(() => {
@@ -39,6 +47,18 @@ function App() {
   }, [creator.locale])
 
   useEffect(() => {
+    window.scrollTo({
+      top: 0,
+      left: 0,
+      behavior: 'auto',
+    })
+  }, [view])
+
+  useEffect(() => {
+    if (view !== 'create') {
+      return
+    }
+
     const message = creator.message.trim()
 
     if (!message) {
@@ -64,7 +84,7 @@ function App() {
     }, 250)
 
     return () => window.clearTimeout(timeoutId)
-  }, [creator.locale, creator.message])
+  }, [view, creator.locale, creator.message])
 
   function handleLocaleChange(locale: Locale) {
     dispatch({ type: 'SET_LOCALE', locale })
@@ -101,17 +121,42 @@ function App() {
     })
 
     dispatch({
-      type: 'PREPARE_VERDICT',
+      type: 'START_REVIEW',
       verdict,
     })
 
     return {}
   }
 
+  if (view === 'reviewing' && generatedVerdict) {
+    return (
+      <ReviewSequence
+        verdict={generatedVerdict}
+        onComplete={() =>
+          dispatch({ type: 'COMPLETE_REVIEW' })
+        }
+      />
+    )
+  }
+
+  if (view === 'verdict' && generatedVerdict) {
+    return (
+      <VerdictView
+        verdict={generatedVerdict}
+        onEdit={() =>
+          dispatch({ type: 'EDIT_INCIDENT' })
+        }
+        onReviewAnother={() =>
+          dispatch({ type: 'REVIEW_ANOTHER' })
+        }
+      />
+    )
+  }
+
   return (
     <CreatorView
       creator={creator}
-      preparedVerdict={preparedVerdict}
+      entryFocus={creatorEntryFocus}
       onLocaleChange={handleLocaleChange}
       onMessageChange={(message) =>
         dispatch({ type: 'SET_MESSAGE', message })

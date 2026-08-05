@@ -4,11 +4,11 @@ import {
   getVerdictVariantById,
 } from '../../content'
 import type {
+  CreatorEntryFocus,
   CreatorFieldErrors,
   CreatorState,
 } from '../../app/app-state'
 import type {
-  GeneratedVerdict,
   IncidentCategoryId,
   Locale,
 } from '../../shared/types/domain'
@@ -19,7 +19,7 @@ import './creator.css'
 
 type CreatorViewProps = {
   creator: CreatorState
-  preparedVerdict: GeneratedVerdict | null
+  entryFocus: CreatorEntryFocus
   onLocaleChange: (locale: Locale) => void
   onMessageChange: (message: string) => void
   onPlayerNameChange: (playerName: string) => void
@@ -42,7 +42,7 @@ const demoByLocale = {
 
 export function CreatorView({
   creator,
-  preparedVerdict,
+  entryFocus,
   onLocaleChange,
   onMessageChange,
   onPlayerNameChange,
@@ -66,8 +66,14 @@ export function CreatorView({
   return (
     <main className="creator-page">
       <header className="creator-topbar">
-        <div className="creator-wordmark" aria-label="VAR for Messages">
-          <span className="creator-wordmark__mark" aria-hidden="true">
+        <div
+          className="creator-wordmark"
+          aria-label="VAR for Messages"
+        >
+          <span
+            className="creator-wordmark__mark"
+            aria-hidden="true"
+          >
             VAR
           </span>
           <span>for Messages</span>
@@ -82,7 +88,9 @@ export function CreatorView({
 
       <section className="creator-intro">
         <div className="creator-intro__copy">
-          <p className="creator-kicker">{copy.creatorKicker}</p>
+          <p className="creator-kicker">
+            {copy.creatorKicker}
+          </p>
           <h1>{copy.headline}</h1>
           <p>{copy.supportingText}</p>
         </div>
@@ -111,17 +119,19 @@ export function CreatorView({
         aria-labelledby="creator-form-title"
       >
         <div className="creator-workspace__intro">
-          <p className="creator-kicker">{copy.newIncidentLabel}</p>
-          <h2 id="creator-form-title">{copy.formHeadline}</h2>
+          <p className="creator-kicker">
+            {copy.newIncidentLabel}
+          </p>
+          <h2 id="creator-form-title">
+            {copy.formHeadline}
+          </h2>
         </div>
 
         <CreatorForm
           creator={creator}
           categories={categories}
           copy={copy}
-          preparedVariantId={
-            preparedVerdict?.variantId
-          }
+          focusMessageOnMount={entryFocus === 'message'}
           onMessageChange={onMessageChange}
           onPlayerNameChange={onPlayerNameChange}
           onCategoryChange={onCategoryChange}

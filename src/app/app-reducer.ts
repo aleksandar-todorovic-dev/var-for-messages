@@ -27,9 +27,16 @@ export type AppAction =
       errors: CreatorFieldErrors
     }
   | {
-      type: 'PREPARE_VERDICT'
+      type: 'START_REVIEW'
       verdict: GeneratedVerdict
     }
+  | { type: 'COMPLETE_REVIEW' }
+  | { type: 'EDIT_INCIDENT' }
+  | { type: 'REVIEW_ANOTHER' }
+
+function isCreateView(state: AppState) {
+  return state.view === 'create'
+}
 
 export function appReducer(
   state: AppState,
@@ -37,6 +44,10 @@ export function appReducer(
 ): AppState {
   switch (action.type) {
     case 'SET_LOCALE':
+      if (!isCreateView(state)) {
+        return state
+      }
+
       return {
         ...state,
         creator: {
@@ -44,10 +55,14 @@ export function appReducer(
           locale: action.locale,
           errors: {},
         },
-        preparedVerdict: null,
+        generatedVerdict: null,
       }
 
     case 'SET_MESSAGE':
+      if (!isCreateView(state)) {
+        return state
+      }
+
       return {
         ...state,
         creator: {
@@ -58,10 +73,14 @@ export function appReducer(
             message: undefined,
           },
         },
-        preparedVerdict: null,
+        generatedVerdict: null,
       }
 
     case 'SET_PLAYER_NAME':
+      if (!isCreateView(state)) {
+        return state
+      }
+
       return {
         ...state,
         creator: {
@@ -72,10 +91,14 @@ export function appReducer(
             playerName: undefined,
           },
         },
-        preparedVerdict: null,
+        generatedVerdict: null,
       }
 
     case 'APPLY_CATEGORY_SUGGESTION': {
+      if (!isCreateView(state)) {
+        return state
+      }
+
       const manualSelection =
         state.creator.categorySelectionSource === 'manual'
 
@@ -109,6 +132,10 @@ export function appReducer(
     }
 
     case 'SELECT_CATEGORY':
+      if (!isCreateView(state)) {
+        return state
+      }
+
       return {
         ...state,
         creator: {
@@ -120,27 +147,37 @@ export function appReducer(
             category: undefined,
           },
         },
-        preparedVerdict: null,
+        generatedVerdict: null,
       }
 
     case 'VALIDATION_FAILED':
+      if (!isCreateView(state)) {
+        return state
+      }
+
       return {
         ...state,
         creator: {
           ...state.creator,
           errors: action.errors,
         },
-        preparedVerdict: null,
+        generatedVerdict: null,
       }
 
-    case 'PREPARE_VERDICT':
+    case 'START_REVIEW':
+      if (!isCreateView(state)) {
+        return state
+      }
+
       return {
         ...state,
+        view: 'reviewing',
+        creatorEntryFocus: 'none',
         creator: {
           ...state.creator,
           errors: {},
         },
-        preparedVerdict: action.verdict,
+        generatedVerdict: action.verdict,
         session: {
           generatedCount: state.session.generatedCount + 1,
           lastVariantIdByCategory: {
@@ -148,6 +185,53 @@ export function appReducer(
             [action.verdict.categoryId]: action.verdict.variantId,
           },
         },
+      }
+
+    case 'COMPLETE_REVIEW':
+      if (
+        state.view !== 'reviewing' ||
+        !state.generatedVerdict
+      ) {
+        return state
+      }
+
+      return {
+        ...state,
+        view: 'verdict',
+      }
+
+    case 'EDIT_INCIDENT':
+      if (state.view !== 'verdict') {
+        return state
+      }
+
+      return {
+        ...state,
+        view: 'create',
+        creatorEntryFocus: 'message',
+        generatedVerdict: null,
+      }
+
+    case 'REVIEW_ANOTHER':
+      if (state.view !== 'verdict') {
+        return state
+      }
+
+      return {
+        ...state,
+        view: 'create',
+        creatorEntryFocus: 'message',
+        creator: {
+          ...state.creator,
+          message: '',
+          playerName: '',
+          suggestedCategoryId: null,
+          selectedCategoryId: null,
+          suggestionConfidence: 'none',
+          categorySelectionSource: null,
+          errors: {},
+        },
+        generatedVerdict: null,
       }
   }
 }

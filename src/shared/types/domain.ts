@@ -1,6 +1,8 @@
 export const locales = ['sr', 'en'] as const
 export type Locale = (typeof locales)[number]
 
+export type AppView = 'create' | 'reviewing' | 'verdict'
+
 export const incidentCategoryIds = [
   'time_wasting',
   'dry_texting',

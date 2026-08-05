@@ -1,4 +1,5 @@
 import type {
+  AppView,
   GeneratedVerdict,
   IncidentCategoryId,
   Locale,
@@ -12,6 +13,7 @@ export type CreatorFieldErrors = {
 }
 
 export type CategorySelectionSource = 'suggestion' | 'manual' | null
+export type CreatorEntryFocus = 'none' | 'message'
 
 export type CreatorState = {
   locale: Locale
@@ -34,13 +36,16 @@ export type SessionState = {
 }
 
 export type AppState = {
+  view: AppView
   creator: CreatorState
-  preparedVerdict: GeneratedVerdict | null
+  creatorEntryFocus: CreatorEntryFocus
+  generatedVerdict: GeneratedVerdict | null
   session: SessionState
 }
 
 export function createInitialAppState(locale: Locale): AppState {
   return {
+    view: 'create',
     creator: {
       locale,
       message: '',
@@ -51,7 +56,8 @@ export function createInitialAppState(locale: Locale): AppState {
       categorySelectionSource: null,
       errors: {},
     },
-    preparedVerdict: null,
+    creatorEntryFocus: 'none',
+    generatedVerdict: null,
     session: {
       lastVariantIdByCategory: {},
       generatedCount: 0,

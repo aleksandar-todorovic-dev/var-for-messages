@@ -3,7 +3,7 @@ import type { GeneratedVerdict } from '../shared/types/domain'
 import { appReducer } from './app-reducer'
 import { createInitialAppState } from './app-state'
 
-const preparedVerdict: GeneratedVerdict = {
+const generatedVerdict: GeneratedVerdict = {
   locale: 'sr',
   originalMessage: 'Važi.',
   categoryId: 'dry_texting',
@@ -18,7 +18,20 @@ const preparedVerdict: GeneratedVerdict = {
   variantId: 'sr_dry_vazi_yellow',
 }
 
-describe('appReducer creator flow', () => {
+function createReviewingState() {
+  return appReducer(createInitialAppState('sr'), {
+    type: 'START_REVIEW',
+    verdict: generatedVerdict,
+  })
+}
+
+function createVerdictState() {
+  return appReducer(createReviewingState(), {
+    type: 'COMPLETE_REVIEW',
+  })
+}
+
+describe('appReducer application flow', () => {
   it('auto-selects a high-confidence suggestion', () => {
     const state = appReducer(createInitialAppState('sr'), {
       type: 'APPLY_CATEGORY_SUGGESTION',
@@ -66,17 +79,78 @@ describe('appReducer creator flow', () => {
     )
   })
 
-  it('stores the prepared verdict and session history', () => {
-    const state = appReducer(createInitialAppState('sr'), {
-      type: 'PREPARE_VERDICT',
-      verdict: preparedVerdict,
-    })
+  it('starts review and stores session history', () => {
+    const state = createReviewingState()
 
-    expect(state.preparedVerdict).toEqual(preparedVerdict)
+    expect(state.view).toBe('reviewing')
+    expect(state.generatedVerdict).toEqual(generatedVerdict)
     expect(state.session.generatedCount).toBe(1)
     expect(
       state.session.lastVariantIdByCategory.dry_texting,
-    ).toBe(preparedVerdict.variantId)
+    ).toBe(generatedVerdict.variantId)
+  })
+
+  it('completes review only from a valid reviewing state', () => {
+    const createState = createInitialAppState('sr')
+    const unchangedState = appReducer(createState, {
+      type: 'COMPLETE_REVIEW',
+    })
+
+    expect(unchangedState).toBe(createState)
+
+    const verdictState = createVerdictState()
+
+    expect(verdictState.view).toBe('verdict')
+    expect(verdictState.generatedVerdict).toEqual(generatedVerdict)
+  })
+
+  it('edits an incident without clearing creator fields', () => {
+    const creatorState = createInitialAppState('sr')
+    creatorState.creator.message = 'Važi.'
+    creatorState.creator.playerName = 'Aleksandar'
+    creatorState.creator.selectedCategoryId = 'dry_texting'
+
+    const reviewingState = appReducer(creatorState, {
+      type: 'START_REVIEW',
+      verdict: generatedVerdict,
+    })
+
+    const verdictState = appReducer(reviewingState, {
+      type: 'COMPLETE_REVIEW',
+    })
+
+    const editedState = appReducer(verdictState, {
+      type: 'EDIT_INCIDENT',
+    })
+
+    expect(editedState.view).toBe('create')
+    expect(editedState.creator.message).toBe('Važi.')
+    expect(editedState.creator.playerName).toBe('Aleksandar')
+    expect(editedState.creator.selectedCategoryId).toBe(
+      'dry_texting',
+    )
+    expect(editedState.creatorEntryFocus).toBe('message')
+    expect(editedState.generatedVerdict).toBeNull()
+  })
+
+  it('starts another review with a clean incident and preserved session', () => {
+    const verdictState = createVerdictState()
+
+    const nextState = appReducer(verdictState, {
+      type: 'REVIEW_ANOTHER',
+    })
+
+    expect(nextState.view).toBe('create')
+    expect(nextState.creator.locale).toBe('sr')
+    expect(nextState.creator.message).toBe('')
+    expect(nextState.creator.playerName).toBe('')
+    expect(nextState.creator.selectedCategoryId).toBeNull()
+    expect(nextState.creator.suggestedCategoryId).toBeNull()
+    expect(nextState.creatorEntryFocus).toBe('message')
+    expect(nextState.session.generatedCount).toBe(1)
+    expect(
+      nextState.session.lastVariantIdByCategory.dry_texting,
+    ).toBe(generatedVerdict.variantId)
   })
 
   it('keeps the selected category when locale changes', () => {
@@ -94,5 +168,16 @@ describe('appReducer creator flow', () => {
     expect(englishState.creator.selectedCategoryId).toBe(
       'planning_foul',
     )
+  })
+
+  it('ignores creator edits outside the create view', () => {
+    const reviewingState = createReviewingState()
+
+    const unchangedState = appReducer(reviewingState, {
+      type: 'SET_MESSAGE',
+      message: 'Changed too late',
+    })
+
+    expect(unchangedState).toBe(reviewingState)
   })
 })
