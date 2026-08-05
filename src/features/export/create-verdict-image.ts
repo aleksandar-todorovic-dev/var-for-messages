@@ -1,5 +1,3 @@
-import { getFontEmbedCSS, toBlob } from 'html-to-image'
-
 export const VERDICT_EXPORT_WIDTH = 1080
 export const VERDICT_EXPORT_HEIGHT = 1350
 
@@ -10,14 +8,14 @@ export type VerdictImageResult = {
   height: number
 }
 
-function sanitizeCaseId(caseId: string) {
+export function createVerdictFileName(caseId: string) {
   const sanitized = caseId
     .replace(/^#/, '')
     .toLowerCase()
     .replace(/[^a-z0-9-]+/g, '-')
     .replace(/^-+|-+$/g, '')
 
-  return sanitized || 'case'
+  return `var-verdict-${sanitized || 'case'}.png`
 }
 
 function waitForPaint() {
@@ -65,6 +63,7 @@ export async function createVerdictImage(
   await document.fonts.ready
   await waitForPaint()
 
+  const { getFontEmbedCSS, toBlob } = await import('html-to-image')
   const fontEmbedCSS = await getFontEmbedCSS(node)
 
   const blob = await toBlob(node, {
@@ -94,11 +93,14 @@ export async function createVerdictImage(
     )
   }
 
-  const fileName = `var-verdict-${sanitizeCaseId(caseId)}.png`
-  const file = new File([blob], fileName, {
-    type: 'image/png',
-    lastModified: Date.now(),
-  })
+  const file = new File(
+    [blob],
+    createVerdictFileName(caseId),
+    {
+      type: 'image/png',
+      lastModified: Date.now(),
+    },
+  )
 
   return {
     blob,

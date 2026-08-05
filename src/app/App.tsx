@@ -1,5 +1,10 @@
-import { useEffect, useReducer } from 'react'
+import {
+  useEffect,
+  useReducer,
+  useRef,
+} from 'react'
 import { getUiCopy } from '../content'
+import { track } from '../features/analytics/analytics'
 import { suggestCategory } from '../features/category-suggestion/suggest-category'
 import { CreatorView } from '../features/creator/CreatorView'
 import {
@@ -24,6 +29,8 @@ import {
 } from './app-state'
 import './app.css'
 
+const APP_VERSION = '0.1.0'
+
 function App() {
   const [state, dispatch] = useReducer(
     appReducer,
@@ -39,11 +46,26 @@ function App() {
     session,
   } = state
   const copy = getUiCopy(creator.locale)
+  const landingTrackedRef = useRef(false)
+  const lastSuggestionEventRef = useRef('')
 
   useEffect(() => {
     persistLocale(creator.locale)
     document.documentElement.lang =
       creator.locale === 'sr' ? 'sr-Latn' : 'en'
+  }, [creator.locale])
+
+  useEffect(() => {
+    if (landingTrackedRef.current) {
+      return
+    }
+
+    landingTrackedRef.current = true
+
+    track('landing_viewed', {
+      locale: creator.locale,
+      appVersion: APP_VERSION,
+    })
   }, [creator.locale])
 
   useEffect(() => {
@@ -62,6 +84,8 @@ function App() {
     const message = creator.message.trim()
 
     if (!message) {
+      lastSuggestionEventRef.current = ''
+
       dispatch({
         type: 'APPLY_CATEGORY_SUGGESTION',
         categoryId: null,
@@ -81,18 +105,64 @@ function App() {
         categoryId: suggestion.categoryId,
         confidence: suggestion.confidence,
       })
+
+      if (
+        suggestion.categoryId &&
+        suggestion.confidence !== 'none'
+      ) {
+        const eventKey = [
+          creator.locale,
+          suggestion.categoryId,
+          suggestion.confidence,
+        ].join(':')
+
+        if (
+          eventKey !== lastSuggestionEventRef.current
+        ) {
+          lastSuggestionEventRef.current = eventKey
+
+          track('category_suggested', {
+            locale: creator.locale,
+            categoryId: suggestion.categoryId,
+            confidence: suggestion.confidence,
+          })
+        }
+      }
     }, 250)
 
     return () => window.clearTimeout(timeoutId)
   }, [view, creator.locale, creator.message])
 
   function handleLocaleChange(locale: Locale) {
+    if (locale === creator.locale) {
+      return
+    }
+
+    track('language_changed', {
+      from: creator.locale,
+      to: locale,
+      view,
+    })
+
+    lastSuggestionEventRef.current = ''
     dispatch({ type: 'SET_LOCALE', locale })
   }
 
   function handleCategoryChange(
     categoryId: IncidentCategoryId,
   ) {
+    if (
+      creator.suggestedCategoryId &&
+      creator.suggestedCategoryId !== categoryId
+    ) {
+      track('category_overridden', {
+        locale: creator.locale,
+        suggestedCategoryId:
+          creator.suggestedCategoryId,
+        selectedCategoryId: categoryId,
+      })
+    }
+
     dispatch({ type: 'SELECT_CATEGORY', categoryId })
   }
 
@@ -120,6 +190,13 @@ function App() {
       caseOccurrence: session.generatedCount + 1,
     })
 
+    track('verdict_generated', {
+      locale: verdict.locale,
+      categoryId: verdict.categoryId,
+      severity: verdict.severity,
+      generatedCount: session.generatedCount + 1,
+    })
+
     dispatch({
       type: 'START_REVIEW',
       verdict,
@@ -143,12 +220,24 @@ function App() {
     return (
       <VerdictView
         verdict={generatedVerdict}
-        onEdit={() =>
+        onEdit={() => {
+          track('edit_clicked', {
+            locale: generatedVerdict.locale,
+            categoryId: generatedVerdict.categoryId,
+          })
+
           dispatch({ type: 'EDIT_INCIDENT' })
-        }
-        onReviewAnother={() =>
+        }}
+        onReviewAnother={() => {
+          track('review_another_clicked', {
+            locale: generatedVerdict.locale,
+            previousCategoryId:
+              generatedVerdict.categoryId,
+            generatedCount: session.generatedCount,
+          })
+
           dispatch({ type: 'REVIEW_ANOTHER' })
-        }
+        }}
       />
     )
   }

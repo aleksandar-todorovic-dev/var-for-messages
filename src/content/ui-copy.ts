@@ -36,6 +36,17 @@ export const srUiCopy = {
   edit: 'Izmeni incident',
   reviewAnother: 'Nova provera',
 
+  actionStatus: {
+    preparing: 'Pripremam PNG za deljenje…',
+    sharing: 'Otvaram sistemsko deljenje…',
+    shared: 'Presuda je predata sistemskom meniju za deljenje.',
+    cancelled: 'Deljenje je otkazano.',
+    fallbackDownloaded:
+      'Ovaj browser ne podržava deljenje PNG fajla. Presuda je preuzeta.',
+    downloaded: 'PNG presuda je preuzeta.',
+    retry: 'Pokušaj ponovo',
+  },
+
   validation: {
     emptyMessage: 'Unesi poruku koju VAR treba da pregleda.',
     messageTooLong: 'Poruka mora imati najviše 140 karaktera.',
@@ -98,6 +109,17 @@ export const enUiCopy = {
   download: 'Download PNG',
   edit: 'Edit incident',
   reviewAnother: 'Review another',
+
+  actionStatus: {
+    preparing: 'Preparing the PNG for sharing…',
+    sharing: 'Opening system sharing…',
+    shared: 'The ruling was handed to the system share menu.',
+    cancelled: 'Sharing was cancelled.',
+    fallbackDownloaded:
+      'This browser cannot share the PNG file. The ruling was downloaded instead.',
+    downloaded: 'The PNG ruling was downloaded.',
+    retry: 'Try again',
+  },
 
   validation: {
     emptyMessage: 'Enter the message VAR should review.',

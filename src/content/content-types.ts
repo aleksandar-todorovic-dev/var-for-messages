@@ -57,6 +57,16 @@ export type UiCopy = {
   edit: string
   reviewAnother: string
 
+  actionStatus: {
+    preparing: string
+    sharing: string
+    shared: string
+    cancelled: string
+    fallbackDownloaded: string
+    downloaded: string
+    retry: string
+  }
+
   validation: {
     emptyMessage: string
     messageTooLong: string
