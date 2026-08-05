@@ -2,7 +2,14 @@ import './verdict-card.css'
 
 export type VerdictSeverity = 'red' | 'yellow'
 
-type VerdictCardProps = {
+export type DisplayFontId =
+  | 'barlow-condensed'
+  | 'oswald'
+  | 'roboto-condensed'
+
+export type TextFontId = 'inter' | 'roboto'
+
+export type VerdictCardContent = {
   message: string
   reviewLine: string
   sanction: string
@@ -12,6 +19,12 @@ type VerdictCardProps = {
   caseId: string
   severity: VerdictSeverity
   playerName?: string
+}
+
+type VerdictCardProps = VerdictCardContent & {
+  displayFont?: DisplayFontId
+  textFont?: TextFontId
+  exportMode?: boolean
 }
 
 const severityLabels: Record<VerdictSeverity, string> = {
@@ -43,6 +56,9 @@ export function VerdictCard({
   caseId,
   severity,
   playerName,
+  displayFont = 'barlow-condensed',
+  textFont = 'inter',
+  exportMode = false,
 }: VerdictCardProps) {
   const messageSize = getMessageSize(message)
 
@@ -52,7 +68,12 @@ export function VerdictCard({
         'verdict-card',
         `verdict-card--${severity}`,
         `verdict-card--message-${messageSize}`,
-      ].join(' ')}
+        `verdict-card--display-${displayFont}`,
+        `verdict-card--text-${textFont}`,
+        exportMode ? 'verdict-card--export' : '',
+      ]
+        .filter(Boolean)
+        .join(' ')}
       lang="sr"
       aria-label={`${severityLabels[severity]}: ${offense}`}
     >

@@ -1,0 +1,15 @@
+.export-stage {
+  position: fixed;
+  top: 0;
+  left: -20000px;
+  z-index: -1;
+  width: 1080px;
+  height: 1350px;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.export-stage__canvas {
+  width: 1080px;
+  height: 1350px;
+}

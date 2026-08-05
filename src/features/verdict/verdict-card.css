@@ -4,6 +4,8 @@
   --paper: #f1eadb;
   --paper-muted: #cfc7b8;
   --rule: rgb(17 17 15 / 0.18);
+  --font-display: "Barlow Condensed", sans-serif;
+  --font-text: Inter, sans-serif;
 
   container-type: inline-size;
   position: relative;
@@ -22,10 +24,38 @@
   border: max(1px, 0.35cqw) solid rgb(241 234 219 / 0.72);
   outline: max(1px, 0.18cqw) solid rgb(17 17 15 / 0.88);
   box-shadow: 0 1.4rem 3.6rem rgb(0 0 0 / 0.26);
+  font-family: var(--font-text);
 }
 
 .verdict-card--yellow {
   --severity: #f2c94c;
+}
+
+.verdict-card--display-barlow-condensed {
+  --font-display: "Barlow Condensed", sans-serif;
+}
+
+.verdict-card--display-oswald {
+  --font-display: Oswald, sans-serif;
+}
+
+.verdict-card--display-roboto-condensed {
+  --font-display: "Roboto Condensed", sans-serif;
+}
+
+.verdict-card--text-inter {
+  --font-text: Inter, sans-serif;
+}
+
+.verdict-card--text-roboto {
+  --font-text: Roboto, sans-serif;
+}
+
+.verdict-card--export {
+  width: 1080px;
+  height: 1350px;
+  aspect-ratio: auto;
+  box-shadow: none;
 }
 
 .verdict-card__decision-line {
@@ -137,7 +167,7 @@
   margin: 0;
   overflow: hidden;
   font-size: 5.9cqw;
-  font-weight: 760;
+  font-weight: 700;
   line-height: 1.02;
   letter-spacing: -0.035em;
   -webkit-box-orient: vertical;
@@ -168,7 +198,7 @@
   max-width: 42ch;
   margin: 0;
   font-size: 2.72cqw;
-  font-weight: 720;
+  font-weight: 700;
   line-height: 1.18;
 }
 
@@ -219,8 +249,7 @@
 
 .verdict-card__sanction {
   margin: 0;
-  font-family:
-    Impact, Haettenschweiler, "Arial Narrow Bold", sans-serif;
+  font-family: var(--font-display);
   font-size: 8.25cqw;
   font-weight: 900;
   line-height: 0.83;
@@ -228,12 +257,17 @@
   text-transform: uppercase;
 }
 
+.verdict-card--display-oswald .verdict-card__sanction {
+  font-weight: 700;
+  letter-spacing: -0.04em;
+}
+
 .verdict-card__offense {
   max-width: 34ch;
   margin: 1.4cqw 0 0;
   color: var(--severity);
   font-size: 3.2cqw;
-  font-weight: 850;
+  font-weight: 800;
   line-height: 1.04;
   letter-spacing: 0.015em;
   text-transform: uppercase;
@@ -253,7 +287,7 @@
   margin: 0;
   overflow: hidden;
   font-size: 2.64cqw;
-  font-weight: 650;
+  font-weight: 600;
   line-height: 1.22;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 4;
@@ -297,7 +331,7 @@
 }
 
 @media (max-width: 360px) {
-  .verdict-card {
+  .verdict-card:not(.verdict-card--export) {
     box-shadow: 0 1rem 2.5rem rgb(0 0 0 / 0.24);
   }
 }
