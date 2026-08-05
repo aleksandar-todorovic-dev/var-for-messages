@@ -1,0 +1,17 @@
+{
+  "name": "VAR for Messages",
+  "short_name": "VAR",
+  "description": "Turn an ordinary message into a football-style VAR ruling.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#151513",
+  "theme_color": "#151513",
+  "icons": [
+    {
+      "src": "/var-mark.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

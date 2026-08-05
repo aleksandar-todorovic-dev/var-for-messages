@@ -16,6 +16,7 @@ import { VerdictCard } from '../verdict/VerdictCard'
 import { CreatorForm } from './CreatorForm'
 import { LanguageSwitch } from './LanguageSwitch'
 import './creator.css'
+import './creator-qa.css'
 
 type CreatorViewProps = {
   creator: CreatorState

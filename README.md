@@ -1,24 +1,52 @@
 # VAR for Messages
 
-VAR for Messages is a mobile-first React prototype that turns an ordinary message into a humorous football-style VAR ruling.
+VAR for Messages is a mobile-first React app that turns an ordinary chat
+message into an absurdly serious football-style VAR ruling.
 
-This repository currently contains the clean development foundation for the first product prototype.
+**Live app:** https://var-for-messages.vercel.app/
 
 ## Current status
 
-Prototype setup.
+The v0.1 MVP flow is implemented:
 
-The project currently includes:
+```text
+create → review → verdict → share or download
+```
 
-* React
-* TypeScript
-* Vite
-* ESLint
-* Git
-* a minimal application shell
-* an initial feature-oriented source structure
+The app currently supports:
 
-Final UI, verdict-card design, and product behavior are not implemented yet.
+- Serbian and English;
+- a required message and optional player name;
+- deterministic category suggestions;
+- manual category override;
+- 6 incident categories;
+- 36 curated SR/EN verdict bundles;
+- a short `scan → lock → reveal` review sequence;
+- red and yellow verdict cards;
+- exact `1080 × 1350` PNG export;
+- native PNG sharing where the browser supports it;
+- download fallback;
+- reduced-motion behavior;
+- client-side generation with no backend.
+
+## Privacy
+
+Raw message text, player names, case IDs, verdict copy, and generated images are
+not sent to analytics or remote storage.
+
+The analytics layer is currently a typed no-op adapter. It records nothing
+until a provider is selected and privacy-reviewed.
+
+## Stack
+
+- React 19
+- TypeScript 6
+- Vite 8
+- Vitest
+- plain CSS
+- Fontsource
+- `html-to-image`
+- Vercel
 
 ## Development
 
@@ -28,79 +56,60 @@ Install dependencies:
 npm install
 ```
 
-Start the local development server:
+Start development:
 
 ```bash
 npm run dev
 ```
 
-Run ESLint:
+Run the full quality gate:
+
+```bash
+npm run check
+```
+
+Individual commands:
 
 ```bash
 npm run lint
-```
-
-Create a production build:
-
-```bash
+npm run test:run
 npm run build
 ```
 
-## Planned source structure
+## Source structure
 
 ```text
 src/
   app/
-    App.tsx
-    app-state.ts
   content/
     sr/
     en/
   features/
-    creator/
+    analytics/
     category-suggestion/
+    creator/
+    export/
     review-sequence/
     verdict/
-    export/
-    analytics/
   shared/
-    components/
-    types/
-    utils/
-    styles/
 ```
 
-Folders are added to Git when they contain actual implementation files. Empty placeholder files are intentionally avoided.
+## v0.1 scope exclusions
 
-## Initial scope
+The MVP intentionally has no:
 
-The first implementation will focus on:
+- backend or database;
+- accounts or history;
+- uploaded screenshots or OCR;
+- generative AI;
+- payments;
+- appeal flow;
+- public gallery;
+- animated export.
 
-* Serbian and English support
-* message input
-* optional player name
-* deterministic category suggestion
-* manual category selection
-* short review state
-* curated verdict generation
-* share and PNG export
+## Deployment
 
-The following are outside the initial setup:
+`main` deploys to Vercel through Git integration.
 
-* backend
-* user accounts
-* analytics implementation
-* deployment
-* payments
-* screenshot upload
-* OCR
-* final branding
-* final visual design
-
-## Privacy direction
-
-The initial product is intended to remain client-side. Raw message text and player names should not be sent to analytics or remote storage.
-
-## Repository status
-
-This repository is currently at the clean project-foundation stage.
+GitHub Actions runs lint, tests, and the production build for pull requests and
+pushes to `main`.

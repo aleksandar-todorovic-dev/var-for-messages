@@ -1,0 +1,37 @@
+/*
+ * Release-candidate creator refinements.
+ *
+ * Kept separate from the accepted creator foundation so this pass remains
+ * narrow, reviewable, and easy to revert if real-user validation disagrees.
+ */
+
+@media (max-width: 620px) {
+  .creator-intro {
+    padding-block: 3.25rem 3.75rem;
+  }
+
+  .creator-demo {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+    width: min(100%, 17rem);
+    margin-left: auto;
+  }
+
+  .creator-demo figcaption {
+    margin: 0;
+    padding: 0;
+  }
+
+  .creator-demo__card {
+    grid-column: auto;
+    grid-row: auto;
+    width: 100%;
+  }
+}
+
+@media (max-width: 360px) {
+  .creator-demo {
+    width: min(100%, 15.75rem);
+  }
+}
