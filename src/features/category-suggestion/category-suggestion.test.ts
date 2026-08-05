@@ -1,0 +1,59 @@
+import { describe, expect, it } from 'vitest'
+import { normalizeForMatching } from './normalize-for-matching'
+import { suggestCategory } from './suggest-category'
+
+describe('category suggestion', () => {
+  it('normalizes Serbian diacritics and punctuation', () => {
+    expect(normalizeForMatching('  VAŽI.  ')).toBe('vazi')
+  })
+
+  it('recognizes a high-confidence dry reply', () => {
+    expect(suggestCategory('sr', 'Važi.')).toEqual({
+      categoryId: 'dry_texting',
+      confidence: 'high',
+      matchedTriggerIds: ['sr_vazi'],
+    })
+  })
+
+  it('prefers a more specific time-wasting trigger', () => {
+    expect(suggestCategory('sr', 'Krećem sad!')).toEqual({
+      categoryId: 'time_wasting',
+      confidence: 'high',
+      matchedTriggerIds: ['sr_leaving_now', 'sr_on_my_way'],
+    })
+  })
+
+  it('recognizes Serbian without diacritics', () => {
+    expect(
+      suggestCategory('sr', 'Tek sad vidim, izvini.'),
+    ).toMatchObject({
+      categoryId: 'suspicious_excuse',
+      confidence: 'high',
+    })
+  })
+
+  it('keeps emotional offside low-confidence', () => {
+    expect(suggestCategory('sr', 'A šta smo mi?')).toEqual({
+      categoryId: 'emotional_offside',
+      confidence: 'low',
+      matchedTriggerIds: ['sr_what_are_we_early'],
+    })
+  })
+
+  it('recognizes independently authored English rules', () => {
+    expect(
+      suggestCategory('en', 'Sorry, just saw this.'),
+    ).toMatchObject({
+      categoryId: 'suspicious_excuse',
+      confidence: 'high',
+    })
+  })
+
+  it('returns no suggestion for an unmatched message', () => {
+    expect(suggestCategory('sr', 'Vidimo se sutra.')).toEqual({
+      categoryId: null,
+      confidence: 'none',
+      matchedTriggerIds: [],
+    })
+  })
+})

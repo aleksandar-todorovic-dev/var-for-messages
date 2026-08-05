@@ -1,6 +1,11 @@
+import { getUiCopy } from '../../content'
+import type {
+  LaunchSeverity,
+  Locale,
+} from '../../shared/types/domain'
 import './verdict-card.css'
 
-export type VerdictSeverity = 'red' | 'yellow'
+export type VerdictSeverity = LaunchSeverity
 
 export type DisplayFontId =
   | 'barlow-condensed'
@@ -19,17 +24,13 @@ export type VerdictCardContent = {
   caseId: string
   severity: VerdictSeverity
   playerName?: string
+  locale?: Locale
 }
 
 type VerdictCardProps = VerdictCardContent & {
   displayFont?: DisplayFontId
   textFont?: TextFontId
   exportMode?: boolean
-}
-
-const severityLabels: Record<VerdictSeverity, string> = {
-  red: 'Crveni karton',
-  yellow: 'Žuti karton',
 }
 
 function getMessageSize(message: string) {
@@ -46,6 +47,12 @@ function getMessageSize(message: string) {
   return 'long'
 }
 
+function getQuotationMarks(locale: Locale) {
+  return locale === 'sr'
+    ? { open: '„', close: '“' }
+    : { open: '“', close: '”' }
+}
+
 export function VerdictCard({
   message,
   reviewLine,
@@ -56,11 +63,14 @@ export function VerdictCard({
   caseId,
   severity,
   playerName,
+  locale = 'sr',
   displayFont = 'barlow-condensed',
   textFont = 'inter',
   exportMode = false,
 }: VerdictCardProps) {
   const messageSize = getMessageSize(message)
+  const copy = getUiCopy(locale).card
+  const quotationMarks = getQuotationMarks(locale)
 
   return (
     <article
@@ -74,31 +84,37 @@ export function VerdictCard({
       ]
         .filter(Boolean)
         .join(' ')}
-      lang="sr"
-      aria-label={`${severityLabels[severity]}: ${offense}`}
+      lang={locale === 'sr' ? 'sr-Latn' : 'en'}
+      aria-label={`${sanction}: ${offense}`}
     >
       <div className="verdict-card__decision-line" aria-hidden="true" />
 
       <header className="verdict-card__header">
-        <p className="verdict-card__eyebrow">VAR REVIEW</p>
-        <p className="verdict-card__case">CASE {caseId}</p>
+        <p className="verdict-card__eyebrow">{copy.reviewLabel}</p>
+        <p className="verdict-card__case">
+          {copy.caseLabel} {caseId}
+        </p>
       </header>
 
       <section className="verdict-card__evidence">
         <div className="verdict-card__evidence-meta">
-          <p className="verdict-card__label">Dokaz A</p>
+          <p className="verdict-card__label">{copy.evidenceLabel}</p>
           {playerName ? (
             <p className="verdict-card__player">
-              Igrač: <span>{playerName}</span>
+              {copy.playerLabel}: <span>{playerName}</span>
             </p>
           ) : null}
         </div>
 
-        <blockquote className="verdict-card__message">„{message}“</blockquote>
+        <blockquote className="verdict-card__message">
+          {quotationMarks.open}
+          {message}
+          {quotationMarks.close}
+        </blockquote>
       </section>
 
       <section className="verdict-card__review">
-        <p className="verdict-card__label">VAR provera</p>
+        <p className="verdict-card__label">{copy.reviewCheckLabel}</p>
         <p className="verdict-card__review-copy">{reviewLine}</p>
       </section>
 
@@ -107,18 +123,22 @@ export function VerdictCard({
           <span className="verdict-card__severity-lock" />
         </span>
 
-        <p className="verdict-card__decision-kicker">Konačna odluka</p>
+        <p className="verdict-card__decision-kicker">
+          {copy.finalDecisionLabel}
+        </p>
         <h2 className="verdict-card__sanction">{sanction}</h2>
         <p className="verdict-card__offense">{offense}</p>
       </section>
 
       <section className="verdict-card__explanation">
-        <p className="verdict-card__label">Obrazloženje</p>
+        <p className="verdict-card__label">{copy.explanationLabel}</p>
         <p className="verdict-card__explanation-copy">{explanation}</p>
       </section>
 
       <footer className="verdict-card__penalty">
-        <p className="verdict-card__penalty-label">Kazna</p>
+        <p className="verdict-card__penalty-label">
+          {copy.penaltyLabel}
+        </p>
         <p className="verdict-card__penalty-copy">{penalty}</p>
         <p className="verdict-card__attribution">VAR for Messages</p>
       </footer>

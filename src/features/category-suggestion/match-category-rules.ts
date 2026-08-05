@@ -1,0 +1,67 @@
+import type { Locale } from '../../shared/types/domain'
+import {
+  categoryRules,
+  type CategoryRule,
+} from './category-rules'
+import { normalizeForMatching } from './normalize-for-matching'
+
+export type TriggerMatch = Pick<
+  CategoryRule,
+  | 'triggerId'
+  | 'locale'
+  | 'categoryId'
+  | 'confidence'
+  | 'priority'
+  | 'match'
+>
+
+export function matchCategoryRules(
+  locale: Locale,
+  message: string,
+): TriggerMatch[] {
+  const normalizedMessage = normalizeForMatching(message)
+
+  if (!normalizedMessage) {
+    return []
+  }
+
+  return categoryRules
+    .filter((rule) => rule.locale === locale)
+    .filter((rule) =>
+      rule.values.some((value) => {
+        const normalizedValue = normalizeForMatching(value)
+
+        return rule.match === 'exact'
+          ? normalizedMessage === normalizedValue
+          : normalizedMessage.includes(normalizedValue)
+      }),
+    )
+    .map(
+      ({
+        triggerId,
+        categoryId,
+        confidence,
+        priority,
+        match,
+        locale: ruleLocale,
+      }) => ({
+        triggerId,
+        categoryId,
+        confidence,
+        priority,
+        match,
+        locale: ruleLocale,
+      }),
+    )
+    .sort((left, right) => {
+      if (left.priority !== right.priority) {
+        return right.priority - left.priority
+      }
+
+      if (left.match !== right.match) {
+        return left.match === 'exact' ? -1 : 1
+      }
+
+      return left.triggerId.localeCompare(right.triggerId)
+    })
+}
