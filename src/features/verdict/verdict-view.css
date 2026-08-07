@@ -78,6 +78,12 @@
 }
 
 .verdict-view__actions {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.verdict-view__decision-summary {
   min-width: 0;
 }
 
@@ -132,10 +138,17 @@
   text-transform: uppercase;
 }
 
+.verdict-view__primary-action-zone {
+  margin-top: 1.5rem;
+}
+
 .verdict-view__buttons {
   display: grid;
   gap: 0.75rem;
-  margin-top: 1.5rem;
+}
+
+.verdict-view__buttons--secondary {
+  margin-top: 0.75rem;
 }
 
 .verdict-view__button {
@@ -206,6 +219,11 @@
   margin: 0;
 }
 
+.verdict-view__status:empty {
+  min-height: 0;
+  margin-top: 0;
+}
+
 .verdict-view__status-error {
   display: flex;
   align-items: center;
@@ -257,6 +275,20 @@
   .verdict-view__layout {
     min-height: calc(100vh - 4.75rem);
     padding-block: 2rem 3.5rem;
+  }
+
+  .verdict-view__primary-action-zone {
+    order: -1;
+    margin: 0 0 1.75rem;
+  }
+
+  .verdict-view__decision-summary {
+    order: 0;
+  }
+
+  .verdict-view__buttons--secondary {
+    order: 1;
+    margin-top: 1.25rem;
   }
 
   .verdict-view h1 {

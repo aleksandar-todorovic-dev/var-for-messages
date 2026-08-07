@@ -1,3 +1,4 @@
+import { useRef } from 'react'
 import {
   getCategories,
   getUiCopy,
@@ -12,6 +13,7 @@ import type {
   IncidentCategoryId,
   Locale,
 } from '../../shared/types/domain'
+import { useReducedMotion } from '../../shared/hooks/useReducedMotion'
 import { VerdictCard } from '../verdict/VerdictCard'
 import { CreatorForm } from './CreatorForm'
 import { LanguageSwitch } from './LanguageSwitch'
@@ -57,11 +59,32 @@ export function CreatorView({
     creator.locale,
     demoConfig.variantId,
   )
+  const messageInputRef = useRef<HTMLTextAreaElement>(null)
+  const reducedMotion = useReducedMotion()
 
   if (!demoVariant) {
     throw new Error(
       `Missing creator demo variant: ${demoConfig.variantId}`,
     )
+  }
+
+  function handleHeroAction() {
+    const messageInput = messageInputRef.current
+
+    if (!messageInput) {
+      return
+    }
+
+    // Keep focus synchronous so mobile browsers are allowed to open the
+    // keyboard as a direct result of the user's tap.
+    messageInput.focus({ preventScroll: true })
+
+    window.requestAnimationFrame(() => {
+      messageInput.scrollIntoView({
+        behavior: reducedMotion ? 'auto' : 'smooth',
+        block: 'center',
+      })
+    })
   }
 
   return (
@@ -93,7 +116,17 @@ export function CreatorView({
             {copy.creatorKicker}
           </p>
           <h1>{copy.headline}</h1>
-          <p>{copy.supportingText}</p>
+          <p className="creator-intro__support">
+            {copy.supportingText}
+          </p>
+          <button
+            className="creator-intro__cta"
+            type="button"
+            onClick={handleHeroAction}
+          >
+            <span>{copy.heroCta}</span>
+            <span aria-hidden="true">↓</span>
+          </button>
         </div>
 
         <figure className="creator-demo">
@@ -132,6 +165,7 @@ export function CreatorView({
           creator={creator}
           categories={categories}
           copy={copy}
+          messageInputRef={messageInputRef}
           focusMessageOnMount={entryFocus === 'message'}
           onMessageChange={onMessageChange}
           onPlayerNameChange={onPlayerNameChange}

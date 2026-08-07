@@ -10,6 +10,7 @@ export const srUiCopy = {
 
   headline: 'Poruka ide na VAR proveru.',
   supportingText: 'Ubaci poruku. Dobij presudu. Pošalji je igraču.',
+  heroCta: 'Pošalji na VAR',
 
   messageLabel: 'Poruka za proveru',
   messagePlaceholder: 'Evo me za pet minuta.',
@@ -21,8 +22,9 @@ export const srUiCopy = {
   reviewButton: 'Pregledaj incident',
 
   suggestionPrefix: 'VAR sumnja na:',
+  selectedIncidentPrefix: 'Izabran incident:',
   changeIncident: 'Promeni incident',
-  confirmIncident: 'Izaberi incident',
+  hideIncidents: 'Sakrij incidente',
   categoryPrompt: 'Šta VAR treba da pregleda?',
 
   reviewingStatuses: [
@@ -84,6 +86,7 @@ export const enUiCopy = {
   headline: 'Put the message under review.',
   supportingText:
     'Drop in a message. Get the ruling. Send it back to the player.',
+  heroCta: 'Send to VAR',
 
   messageLabel: 'Message under review',
   messagePlaceholder: 'I’ll be there in five minutes.',
@@ -95,8 +98,9 @@ export const enUiCopy = {
   reviewButton: 'Review incident',
 
   suggestionPrefix: 'VAR suspects:',
+  selectedIncidentPrefix: 'Selected incident:',
   changeIncident: 'Change incident',
-  confirmIncident: 'Choose incident',
+  hideIncidents: 'Hide incidents',
   categoryPrompt: 'What should VAR review?',
 
   reviewingStatuses: [

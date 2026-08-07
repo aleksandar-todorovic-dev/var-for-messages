@@ -81,7 +81,7 @@ export function VerdictView({
   const actionBusy = activeAction !== null
 
   useEffect(() => {
-    headingRef.current?.focus()
+    headingRef.current?.focus({ preventScroll: true })
   }, [])
 
   function resetActionFeedback() {
@@ -211,54 +211,85 @@ export function VerdictView({
         </div>
 
         <aside className="verdict-view__actions">
-          <p className="verdict-view__kicker">
-            {copy.card.finalDecisionLabel}
-          </p>
+          <div className="verdict-view__decision-summary">
+            <p className="verdict-view__kicker">
+              {copy.card.finalDecisionLabel}
+            </p>
 
-          <h1 ref={headingRef} tabIndex={-1}>
-            {verdict.sanction}
-          </h1>
+            <h1 ref={headingRef} tabIndex={-1}>
+              {verdict.sanction}
+            </h1>
 
-          <p className="verdict-view__offense">
-            {verdict.offense}
-          </p>
+            <p className="verdict-view__offense">
+              {verdict.offense}
+            </p>
 
-          <div className="verdict-view__meta">
-            <span>{category?.label ?? verdict.offense}</span>
-            <span>
-              {copy.card.caseLabel} {verdict.caseId}
-            </span>
+            <div className="verdict-view__meta">
+              <span>{category?.label ?? verdict.offense}</span>
+              <span>
+                {copy.card.caseLabel} {verdict.caseId}
+              </span>
+            </div>
           </div>
 
-          <div className="verdict-view__buttons">
-            <button
-              className="verdict-view__button verdict-view__button--share"
-              type="button"
-              disabled={!imageReady || actionBusy}
-              onClick={handleShare}
-            >
-              <span>
-                {activeAction === 'share'
-                  ? copy.actionStatus.sharing
-                  : copy.share}
-              </span>
-              <span aria-hidden="true">↗</span>
-            </button>
+          <div className="verdict-view__primary-action-zone">
+            <div className="verdict-view__buttons verdict-view__buttons--primary">
+              <button
+                className="verdict-view__button verdict-view__button--share"
+                type="button"
+                disabled={!imageReady || actionBusy}
+                onClick={handleShare}
+              >
+                <span>
+                  {activeAction === 'share'
+                    ? copy.actionStatus.sharing
+                    : copy.share}
+                </span>
+                <span aria-hidden="true">↗</span>
+              </button>
 
-            <button
-              className="verdict-view__button verdict-view__button--download"
-              type="button"
-              disabled={!imageReady || actionBusy}
-              onClick={handleDownload}
-            >
-              <span>
-                {activeAction === 'download'
-                  ? copy.actionStatus.preparing
-                  : copy.download}
-              </span>
-              <span aria-hidden="true">↓</span>
-            </button>
+              <button
+                className="verdict-view__button verdict-view__button--download"
+                type="button"
+                disabled={!imageReady || actionBusy}
+                onClick={handleDownload}
+              >
+                <span>
+                  {activeAction === 'download'
+                    ? copy.actionStatus.preparing
+                    : copy.download}
+                </span>
+                <span aria-hidden="true">↓</span>
+              </button>
+            </div>
 
+            <div
+              className="verdict-view__status"
+              aria-live="polite"
+            >
+              {imageStatus === 'preparing' ? (
+                <p>{copy.actionStatus.preparing}</p>
+              ) : null}
+
+              {imageStatus === 'error' || imageError ? (
+                <div className="verdict-view__status-error">
+                  <p>{copy.errors.export}</p>
+                  <button type="button" onClick={handleRetry}>
+                    {copy.actionStatus.retry}
+                  </button>
+                </div>
+              ) : null}
+
+              {actionMessage ? <p>{actionMessage}</p> : null}
+              {actionError ? (
+                <p className="verdict-view__status-error-copy">
+                  {actionError}
+                </p>
+              ) : null}
+            </div>
+          </div>
+
+          <div className="verdict-view__buttons verdict-view__buttons--secondary">
             <button
               className="verdict-view__button verdict-view__button--edit"
               type="button"
@@ -278,31 +309,6 @@ export function VerdictView({
               <span>{copy.reviewAnother}</span>
               <span aria-hidden="true">＋</span>
             </button>
-          </div>
-
-          <div
-            className="verdict-view__status"
-            aria-live="polite"
-          >
-            {imageStatus === 'preparing' ? (
-              <p>{copy.actionStatus.preparing}</p>
-            ) : null}
-
-            {imageStatus === 'error' || imageError ? (
-              <div className="verdict-view__status-error">
-                <p>{copy.errors.export}</p>
-                <button type="button" onClick={handleRetry}>
-                  {copy.actionStatus.retry}
-                </button>
-              </div>
-            ) : null}
-
-            {actionMessage ? <p>{actionMessage}</p> : null}
-            {actionError ? (
-              <p className="verdict-view__status-error-copy">
-                {actionError}
-              </p>
-            ) : null}
           </div>
         </aside>
       </section>

@@ -37,6 +37,7 @@ export type UiCopy = {
 
   headline: string
   supportingText: string
+  heroCta: string
 
   messageLabel: string
   messagePlaceholder: string
@@ -46,8 +47,9 @@ export type UiCopy = {
   reviewButton: string
 
   suggestionPrefix: string
+  selectedIncidentPrefix: string
   changeIncident: string
-  confirmIncident: string
+  hideIncidents: string
   categoryPrompt: string
 
   reviewingStatuses: readonly [string, string, string]

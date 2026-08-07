@@ -7,7 +7,7 @@ import {
 } from './validate-creator'
 
 describe('validateCreator', () => {
-  it('requires a message and category', () => {
+  it('requires the message before asking for a category', () => {
     const state = createInitialAppState('sr')
     const errors = validateCreator(
       state.creator,
@@ -15,6 +15,19 @@ describe('validateCreator', () => {
     )
 
     expect(errors.message).toBeDefined()
+    expect(errors.category).toBeUndefined()
+  })
+
+  it('requires a category once a message exists', () => {
+    const state = createInitialAppState('sr')
+    state.creator.message = 'Vidimo se večeras.'
+
+    const errors = validateCreator(
+      state.creator,
+      getUiCopy('sr'),
+    )
+
+    expect(errors.message).toBeUndefined()
     expect(errors.category).toBeDefined()
   })
 

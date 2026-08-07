@@ -298,9 +298,20 @@
   position: absolute;
   right: 4.8cqw;
   bottom: 2.1cqw;
+  display: flex;
+  align-items: baseline;
+  gap: 1.1cqw;
   color: var(--paper-muted);
   font-size: 1.32cqw;
   letter-spacing: 0.055em;
+}
+
+.verdict-card__origin {
+  color: var(--paper-muted);
+  font-size: 0.92em;
+  font-weight: 700;
+  letter-spacing: 0.035em;
+  text-transform: none;
 }
 
 @media (max-width: 360px) {

@@ -18,6 +18,7 @@ export type VerdictCardContent = {
   severity: VerdictSeverity
   playerName?: string
   locale?: Locale
+  originLabel?: string
 }
 
 type VerdictCardProps = VerdictCardContent & {
@@ -55,6 +56,7 @@ export function VerdictCard({
   severity,
   playerName,
   locale = 'sr',
+  originLabel,
   exportMode = false,
 }: VerdictCardProps) {
   const messageSize = getMessageSize(message)
@@ -149,7 +151,12 @@ export function VerdictCard({
           {penalty}
         </p>
         <p className="verdict-card__attribution">
-          VAR for Messages
+          <span>VAR for Messages</span>
+          {originLabel ? (
+            <span className="verdict-card__origin">
+              {originLabel}
+            </span>
+          ) : null}
         </p>
       </footer>
     </article>

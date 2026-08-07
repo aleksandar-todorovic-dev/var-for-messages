@@ -35,7 +35,7 @@ export function validateCreator(
     errors.playerName = copy.validation.playerNameTooLong
   }
 
-  if (!creator.selectedCategoryId) {
+  if (normalizedMessage && !creator.selectedCategoryId) {
     errors.category = copy.validation.missingCategory
   }
 

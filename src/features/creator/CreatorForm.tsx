@@ -1,6 +1,8 @@
 import {
   useRef,
   type FormEvent,
+  type KeyboardEvent,
+  type RefObject,
 } from 'react'
 import type {
   CategoryDefinition,
@@ -22,6 +24,7 @@ type CreatorFormProps = {
   creator: CreatorState
   categories: readonly CategoryDefinition[]
   copy: UiCopy
+  messageInputRef: RefObject<HTMLTextAreaElement | null>
   focusMessageOnMount: boolean
   onMessageChange: (message: string) => void
   onPlayerNameChange: (playerName: string) => void
@@ -35,18 +38,19 @@ export function CreatorForm({
   creator,
   categories,
   copy,
+  messageInputRef,
   focusMessageOnMount,
   onMessageChange,
   onPlayerNameChange,
   onCategoryChange,
   onSubmit,
 }: CreatorFormProps) {
-  const messageRef = useRef<HTMLTextAreaElement>(null)
   const playerNameRef = useRef<HTMLInputElement>(null)
   const categoryGroupRef =
     useRef<HTMLFieldSetElement>(null)
 
   const messageLength = countCharacters(creator.message)
+  const hasMessage = Boolean(creator.message.trim())
   const playerNameLength = countCharacters(
     creator.playerName,
   )
@@ -54,7 +58,7 @@ export function CreatorForm({
   function focusFirstError(errors: CreatorFieldErrors) {
     window.requestAnimationFrame(() => {
       if (errors.message) {
-        messageRef.current?.focus()
+        messageInputRef.current?.focus()
         return
       }
 
@@ -73,6 +77,40 @@ export function CreatorForm({
     event.preventDefault()
     const errors = onSubmit()
     focusFirstError(errors)
+  }
+
+  function handleMessageKeyDown(
+    event: KeyboardEvent<HTMLTextAreaElement>,
+  ) {
+    if (
+      event.key !== 'Enter' ||
+      event.shiftKey ||
+      event.nativeEvent.isComposing ||
+      !creator.message.trim()
+    ) {
+      return
+    }
+
+    const mobileKeyboard = window.matchMedia(
+      '(max-width: 620px) and (pointer: coarse)',
+    ).matches
+
+    if (!mobileKeyboard) {
+      return
+    }
+
+    event.preventDefault()
+    messageInputRef.current?.blur()
+
+    // Category suggestion runs after a short debounce. Waiting for that
+    // result lets the user land on the compact VAR response instead of an
+    // intermediate layout while the keyboard is closing.
+    window.setTimeout(() => {
+      categoryGroupRef.current?.scrollIntoView({
+        behavior: 'auto',
+        block: 'center',
+      })
+    }, 300)
   }
 
   return (
@@ -104,8 +142,9 @@ export function CreatorForm({
 
         <textarea
           id="incident-message"
-          ref={messageRef}
+          ref={messageInputRef}
           autoFocus={focusMessageOnMount}
+          enterKeyHint="done"
           rows={5}
           value={creator.message}
           placeholder={copy.messagePlaceholder}
@@ -118,6 +157,7 @@ export function CreatorForm({
           onChange={(event) =>
             onMessageChange(event.target.value)
           }
+          onKeyDown={handleMessageKeyDown}
         />
 
         {creator.errors.message ? (
@@ -126,6 +166,20 @@ export function CreatorForm({
           </p>
         ) : null}
       </div>
+
+      {hasMessage ? (
+        <CategoryPicker
+          categories={categories}
+          copy={copy}
+          selectedCategoryId={creator.selectedCategoryId}
+          suggestedCategoryId={creator.suggestedCategoryId}
+          suggestionConfidence={creator.suggestionConfidence}
+          selectionSource={creator.categorySelectionSource}
+          error={creator.errors.category}
+          groupRef={categoryGroupRef}
+          onChange={onCategoryChange}
+        />
+      ) : null}
 
       <div className="creator-field creator-field--compact">
         <div className="creator-field__header">
@@ -167,17 +221,6 @@ export function CreatorForm({
           </p>
         ) : null}
       </div>
-
-      <CategoryPicker
-        categories={categories}
-        copy={copy}
-        selectedCategoryId={creator.selectedCategoryId}
-        suggestedCategoryId={creator.suggestedCategoryId}
-        suggestionConfidence={creator.suggestionConfidence}
-        error={creator.errors.category}
-        groupRef={categoryGroupRef}
-        onChange={onCategoryChange}
-      />
 
       <div className="creator-form__closing">
         <p
