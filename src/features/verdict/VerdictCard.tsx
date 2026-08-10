@@ -56,7 +56,7 @@ export function VerdictCard({
   severity,
   playerName,
   locale = 'sr',
-  originLabel,
+  originLabel = 'varformessages.com',
   exportMode = false,
 }: VerdictCardProps) {
   const messageSize = getMessageSize(message)
@@ -153,9 +153,17 @@ export function VerdictCard({
         <p className="verdict-card__attribution">
           <span>VAR for Messages</span>
           {originLabel ? (
-            <span className="verdict-card__origin">
-              {originLabel}
-            </span>
+            <>
+              <span
+                className="verdict-card__attribution-separator"
+                aria-hidden="true"
+              >
+                ·
+              </span>
+              <span className="verdict-card__origin">
+                {originLabel}
+              </span>
+            </>
           ) : null}
         </p>
       </footer>

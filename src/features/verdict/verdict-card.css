@@ -90,7 +90,7 @@
   padding-left: 2.2cqw;
   color: var(--paper-muted);
   border-left: 0.65cqw solid var(--severity);
-  font-size: 1.95cqw;
+  font-size: 2.12cqw;
   text-align: right;
 }
 
@@ -116,7 +116,7 @@
 
 .verdict-card__label {
   color: rgb(17 17 15 / 0.62);
-  font-size: 1.9cqw;
+  font-size: 2.16cqw;
   letter-spacing: 0.06em;
 }
 
@@ -128,7 +128,7 @@
   min-width: 0;
   overflow: hidden;
   color: rgb(17 17 15 / 0.58);
-  font-size: 1.75cqw;
+  font-size: 2.28cqw;
   letter-spacing: 0.035em;
   text-align: right;
   text-overflow: ellipsis;
@@ -175,9 +175,9 @@
 .verdict-card__review-copy {
   max-width: 42ch;
   margin: 0;
-  font-size: 2.72cqw;
+  font-size: 3cqw;
   font-weight: 700;
-  line-height: 1.18;
+  line-height: 1.16;
 }
 
 .verdict-card__decision {
@@ -222,7 +222,7 @@
 .verdict-card__decision-kicker {
   margin-bottom: 1.05cqw;
   color: var(--severity);
-  font-size: 1.95cqw;
+  font-size: 2.14cqw;
 }
 
 .verdict-card__sanction {
@@ -259,9 +259,9 @@
   max-width: 46ch;
   margin: 0;
   overflow: hidden;
-  font-size: 2.64cqw;
+  font-size: 2.94cqw;
   font-weight: 600;
-  line-height: 1.22;
+  line-height: 1.18;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 4;
 }
@@ -278,7 +278,7 @@
 .verdict-card__penalty-label {
   margin-bottom: 0.75cqw;
   color: var(--severity);
-  font-size: 1.9cqw;
+  font-size: 2.14cqw;
 }
 
 .verdict-card__penalty-copy {
@@ -287,9 +287,9 @@
   margin: 0;
   overflow: hidden;
   padding-right: 9cqw;
-  font-size: 2.38cqw;
+  font-size: 2.68cqw;
   font-weight: 700;
-  line-height: 1.18;
+  line-height: 1.16;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 3;
 }
@@ -300,15 +300,15 @@
   bottom: 2.1cqw;
   display: flex;
   align-items: baseline;
-  gap: 1.1cqw;
+  gap: 0.72cqw;
   color: var(--paper-muted);
-  font-size: 1.32cqw;
+  font-size: 1.78cqw;
   letter-spacing: 0.055em;
 }
 
 .verdict-card__origin {
   color: var(--paper-muted);
-  font-size: 0.92em;
+  font-size: 0.9em;
   font-weight: 700;
   letter-spacing: 0.035em;
   text-transform: none;
