@@ -29,6 +29,30 @@ describe('content library', () => {
     }
   })
 
+  it('uses the v0.3 category labels', () => {
+    expect(
+      getCategories('sr').map((category) => category.label),
+    ).toEqual([
+      'Večnih pet minuta',
+      'Dry reply',
+      'Ne pije vodu',
+      'Svejedno, ali ne to',
+      'Emotivni ofsajd',
+      'Promašen zicer',
+    ])
+
+    expect(
+      getCategories('en').map((category) => category.label),
+    ).toEqual([
+      'On My Way',
+      'Dry Reply',
+      'Yeah, Right',
+      'Anything But That',
+      'Emotional Offside',
+      'Missed Sitter',
+    ])
+  })
+
   it('keeps variant IDs globally unique', () => {
     const ids = allVerdictVariants.map((variant) => variant.id)
 

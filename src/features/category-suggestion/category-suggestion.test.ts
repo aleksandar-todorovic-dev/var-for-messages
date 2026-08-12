@@ -40,6 +40,22 @@ describe('category suggestion', () => {
     })
   })
 
+  it('keeps the Serbian status question low-confidence but distinct', () => {
+    expect(suggestCategory('sr', 'Gde ovo vodi?')).toEqual({
+      categoryId: 'emotional_offside',
+      confidence: 'low',
+      matchedTriggerIds: ['sr_status_too_soon'],
+    })
+  })
+
+  it('keeps the English status question low-confidence but distinct', () => {
+    expect(suggestCategory('en', 'Where is this going?')).toEqual({
+      categoryId: 'emotional_offside',
+      confidence: 'low',
+      matchedTriggerIds: ['en_status_too_soon'],
+    })
+  })
+
   it('recognizes independently authored English rules', () => {
     expect(
       suggestCategory('en', 'Sorry, just saw this.'),

@@ -81,7 +81,7 @@ export const enUiCopy = {
   creatorKicker: 'VAR for messages',
   demoLabel: 'Example ruling',
   newIncidentLabel: 'New incident',
-  formHeadline: 'Send the message to review.',
+  formHeadline: 'Send the message for review.',
 
   headline: 'Put the message under review.',
   supportingText:
