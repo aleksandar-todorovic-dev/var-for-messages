@@ -25,6 +25,26 @@ describe('verdict selection', () => {
     expect(variant.id).toBe('sr_time_now_yellow')
   })
 
+  it('routes the Serbian status question to the dedicated red bundle', () => {
+    const variant = selectVerdictVariant({
+      locale: 'sr',
+      categoryId: 'emotional_offside',
+      message: 'Gde ovo vodi?',
+    })
+
+    expect(variant.id).toBe('sr_offside_where_going_red')
+  })
+
+  it('routes the English status question to the dedicated red bundle', () => {
+    const variant = selectVerdictVariant({
+      locale: 'en',
+      categoryId: 'emotional_offside',
+      message: 'Where is this going?',
+    })
+
+    expect(variant.id).toBe('en_offside_where_going_red')
+  })
+
   it('never crosses language or category', () => {
     const variant = selectVerdictVariant({
       locale: 'en',
@@ -63,7 +83,7 @@ describe('verdict selection', () => {
       categoryId: 'dry_texting',
       severity: 'yellow',
       sanction: 'Žuti karton',
-      offense: 'Za odgovor bez pulsa',
+      offense: 'Dry',
       caseId: '#DRY01',
       variantId: 'sr_dry_vazi_yellow',
     })
