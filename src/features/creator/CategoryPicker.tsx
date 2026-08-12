@@ -63,9 +63,10 @@ export function CategoryPicker({
 
   function handleCategoryChange(
     categoryId: IncidentCategoryId,
+    preserveKeyboardFocus: boolean,
   ) {
     onChange(categoryId)
-    setPickerExpanded(false)
+    setPickerExpanded(preserveKeyboardFocus)
   }
 
   return (
@@ -164,8 +165,13 @@ export function CategoryPicker({
                   name="incident-category"
                   value={category.id}
                   checked={selectedCategoryId === category.id}
-                  onChange={() =>
-                    handleCategoryChange(category.id)
+                  onChange={(event) =>
+                    handleCategoryChange(
+                      category.id,
+                      event.currentTarget.matches(
+                        ':focus-visible',
+                      ),
+                    )
                   }
                 />
 
