@@ -57,15 +57,31 @@ describe('verdict selection', () => {
     expect(variant.categoryId).toBe('dry_texting')
   })
 
-  it('rotates away from the last fallback variant', () => {
-    const variant = selectVerdictVariant({
+  it('rotates fallback variants in deterministic round-robin order', () => {
+    const secondVariant = selectVerdictVariant({
       locale: 'sr',
       categoryId: 'missed_chance',
       message: 'Promenio je temu.',
       lastVariantId: 'sr_missed_question_yellow',
     })
 
-    expect(variant.id).toBe('sr_missed_flirt_red')
+    const thirdVariant = selectVerdictVariant({
+      locale: 'sr',
+      categoryId: 'missed_chance',
+      message: 'Promenio je temu.',
+      lastVariantId: secondVariant.id,
+    })
+
+    const wrappedVariant = selectVerdictVariant({
+      locale: 'sr',
+      categoryId: 'missed_chance',
+      message: 'Promenio je temu.',
+      lastVariantId: thirdVariant.id,
+    })
+
+    expect(secondVariant.id).toBe('sr_missed_flirt_red')
+    expect(thirdVariant.id).toBe('sr_missed_side_yellow')
+    expect(wrappedVariant.id).toBe('sr_missed_question_yellow')
   })
 
   it('assembles one complete generated verdict', () => {

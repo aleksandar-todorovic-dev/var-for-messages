@@ -39,6 +39,25 @@ function excludeLastVariant(
   return alternatives.length > 0 ? alternatives : variants
 }
 
+function selectNextFallbackVariant(
+  variants: readonly VerdictVariant[],
+  lastVariantId?: string,
+) {
+  if (!lastVariantId || variants.length <= 1) {
+    return variants[0]
+  }
+
+  const lastVariantIndex = variants.findIndex(
+    (variant) => variant.id === lastVariantId,
+  )
+
+  if (lastVariantIndex === -1) {
+    return variants[0]
+  }
+
+  return variants[(lastVariantIndex + 1) % variants.length]
+}
+
 export function selectVerdictVariant({
   locale,
   categoryId,
@@ -70,7 +89,7 @@ export function selectVerdictVariant({
     }
   }
 
-  return excludeLastVariant(categoryVariants, lastVariantId)[0]
+  return selectNextFallbackVariant(categoryVariants, lastVariantId)
 }
 
 export function generateVerdict({
