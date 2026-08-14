@@ -153,28 +153,31 @@ describe('verdict selection', () => {
     ).toBe('en_missed_generic_yellow')
   })
 
-  it('keeps deterministic round-robin fallback where no generic fallback exists', () => {
-    const secondVariant = selectVerdictVariant({
-      locale: 'sr',
-      categoryId: 'planning_foul',
-      message: 'Nešto treće.',
-      lastVariantId: 'sr_plan_anything_red',
-    })
-    const thirdVariant = selectVerdictVariant({
-      locale: 'sr',
-      categoryId: 'planning_foul',
-      message: 'Nešto treće.',
-      lastVariantId: secondVariant.id,
-    })
-    const wrappedVariant = selectVerdictVariant({
-      locale: 'sr',
-      categoryId: 'planning_foul',
-      message: 'Nešto treće.',
-      lastVariantId: thirdVariant.id,
-    })
-    expect(secondVariant.id).toBe('sr_plan_choose_yellow')
-    expect(thirdVariant.id).toBe('sr_plan_veto_red')
-    expect(wrappedVariant.id).toBe('sr_plan_anything_red')
+  it('uses a safe category fallback for unmatched manual input', () => {
+    const cases = [
+      ['sr', 'time_wasting', 'sr_time_status_yellow'],
+      ['sr', 'dry_texting', 'sr_dry_short_yellow'],
+      ['sr', 'suspicious_excuse', 'sr_excuse_generic_yellow'],
+      ['sr', 'planning_foul', 'sr_plan_anything_red'],
+      ['sr', 'emotional_offside', 'sr_offside_generic_yellow'],
+      ['sr', 'missed_chance', 'sr_missed_generic_yellow'],
+      ['en', 'time_wasting', 'en_time_status_yellow'],
+      ['en', 'dry_texting', 'en_dry_short_yellow'],
+      ['en', 'suspicious_excuse', 'en_excuse_generic_yellow'],
+      ['en', 'planning_foul', 'en_plan_anything_red'],
+      ['en', 'emotional_offside', 'en_offside_generic_yellow'],
+      ['en', 'missed_chance', 'en_missed_generic_yellow'],
+    ] as const
+
+    for (const [locale, categoryId, expectedId] of cases) {
+      expect(
+        selectVerdictVariant({
+          locale,
+          categoryId,
+          message: 'Completely unmatched text.',
+        }).id,
+      ).toBe(expectedId)
+    }
   })
 
   it('assembles one complete generated verdict', () => {

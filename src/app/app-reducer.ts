@@ -58,23 +58,42 @@ export function appReducer(
         generatedVerdict: null,
       }
 
-    case 'SET_MESSAGE':
+    case 'SET_MESSAGE': {
       if (!isCreateView(state)) {
         return state
       }
+
+      const messageCleared = !action.message.trim()
 
       return {
         ...state,
         creator: {
           ...state.creator,
           message: action.message,
+          suggestedCategoryId: messageCleared
+            ? null
+            : state.creator.suggestedCategoryId,
+          selectedCategoryId: messageCleared
+            ? null
+            : state.creator.selectedCategoryId,
+          suggestionConfidence: messageCleared
+            ? 'none'
+            : state.creator.suggestionConfidence,
+          categorySelectionSource: messageCleared
+            ? null
+            : state.creator.categorySelectionSource,
           errors: {
             ...state.creator.errors,
             message: undefined,
+            category: messageCleared
+              ? undefined
+              : state.creator.errors.category,
+            generation: undefined,
           },
         },
         generatedVerdict: null,
       }
+    }
 
     case 'SET_PLAYER_NAME':
       if (!isCreateView(state)) {
@@ -89,6 +108,7 @@ export function appReducer(
           errors: {
             ...state.creator.errors,
             playerName: undefined,
+            generation: undefined,
           },
         },
         generatedVerdict: null,
@@ -126,6 +146,7 @@ export function appReducer(
           errors: {
             ...state.creator.errors,
             category: undefined,
+            generation: undefined,
           },
         },
       }
@@ -145,6 +166,7 @@ export function appReducer(
           errors: {
             ...state.creator.errors,
             category: undefined,
+            generation: undefined,
           },
         },
         generatedVerdict: null,

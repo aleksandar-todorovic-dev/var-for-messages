@@ -11,12 +11,16 @@ export function getInitialLocale(): Locale {
     return 'sr'
   }
 
-  const storedLocale = window.localStorage.getItem(
-    LOCALE_STORAGE_KEY,
-  )
+  try {
+    const storedLocale = window.localStorage.getItem(
+      LOCALE_STORAGE_KEY,
+    )
 
-  if (isLocale(storedLocale)) {
-    return storedLocale
+    if (isLocale(storedLocale)) {
+      return storedLocale
+    }
+  } catch {
+    // Storage may be blocked; browser locale remains a safe fallback.
   }
 
   return window.navigator.language.toLowerCase().startsWith('sr')
@@ -29,5 +33,9 @@ export function persistLocale(locale: Locale) {
     return
   }
 
-  window.localStorage.setItem(LOCALE_STORAGE_KEY, locale)
+  try {
+    window.localStorage.setItem(LOCALE_STORAGE_KEY, locale)
+  } catch {
+    // Locale persistence is optional and must never break the app.
+  }
 }

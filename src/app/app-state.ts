@@ -10,6 +10,7 @@ export type CreatorFieldErrors = {
   message?: string
   playerName?: string
   category?: string
+  generation?: string
 }
 
 export type CategorySelectionSource = 'suggestion' | 'manual' | null

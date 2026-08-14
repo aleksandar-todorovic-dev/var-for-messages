@@ -50,7 +50,6 @@ function App() {
   const lastSuggestionEventRef = useRef('')
 
   useEffect(() => {
-    persistLocale(creator.locale)
     document.documentElement.lang =
       creator.locale === 'sr' ? 'sr-Latn' : 'en'
   }, [creator.locale])
@@ -134,6 +133,8 @@ function App() {
   }, [view, creator.locale, creator.message])
 
   function handleLocaleChange(locale: Locale) {
+    persistLocale(locale)
+
     if (locale === creator.locale) {
       return
     }
@@ -167,42 +168,99 @@ function App() {
   }
 
   function handleSubmit(): CreatorFieldErrors {
-    const errors = validateCreator(creator, copy)
+    let categoryId = creator.selectedCategoryId
+    let creatorForValidation = creator
+
+    if (!categoryId && creator.message.trim()) {
+      const immediateSuggestion = suggestCategory(
+        creator.locale,
+        creator.message,
+      )
+
+      if (
+        immediateSuggestion.categoryId &&
+        immediateSuggestion.confidence === 'high'
+      ) {
+        categoryId = immediateSuggestion.categoryId
+        creatorForValidation = {
+          ...creator,
+          selectedCategoryId: categoryId,
+        }
+
+        dispatch({
+          type: 'APPLY_CATEGORY_SUGGESTION',
+          categoryId,
+          confidence: 'high',
+        })
+
+        const eventKey = [
+          creator.locale,
+          categoryId,
+          'high',
+        ].join(':')
+
+        if (eventKey !== lastSuggestionEventRef.current) {
+          lastSuggestionEventRef.current = eventKey
+
+          track('category_suggested', {
+            locale: creator.locale,
+            categoryId,
+            confidence: 'high',
+          })
+        }
+      }
+    }
+
+    const errors = validateCreator(
+      creatorForValidation,
+      copy,
+    )
 
     if (hasCreatorErrors(errors)) {
       dispatch({ type: 'VALIDATION_FAILED', errors })
       return errors
     }
 
-    const categoryId = creator.selectedCategoryId
-
     if (!categoryId) {
       return errors
     }
 
-    const verdict = generateVerdict({
-      locale: creator.locale,
-      categoryId,
-      message: creator.message,
-      playerName: creator.playerName,
-      lastVariantId:
-        session.lastVariantIdByCategory[categoryId],
-      caseOccurrence: session.generatedCount + 1,
-    })
+    try {
+      const verdict = generateVerdict({
+        locale: creator.locale,
+        categoryId,
+        message: creator.message,
+        playerName: creator.playerName,
+        lastVariantId:
+          session.lastVariantIdByCategory[categoryId],
+        caseOccurrence: session.generatedCount + 1,
+      })
 
-    track('verdict_generated', {
-      locale: verdict.locale,
-      categoryId: verdict.categoryId,
-      severity: verdict.severity,
-      generatedCount: session.generatedCount + 1,
-    })
+      track('verdict_generated', {
+        locale: verdict.locale,
+        categoryId: verdict.categoryId,
+        severity: verdict.severity,
+        generatedCount: session.generatedCount + 1,
+      })
 
-    dispatch({
-      type: 'START_REVIEW',
-      verdict,
-    })
+      dispatch({
+        type: 'START_REVIEW',
+        verdict,
+      })
 
-    return {}
+      return {}
+    } catch {
+      const generationErrors: CreatorFieldErrors = {
+        generation: copy.errors.generation,
+      }
+
+      dispatch({
+        type: 'VALIDATION_FAILED',
+        errors: generationErrors,
+      })
+
+      return generationErrors
+    }
   }
 
   if (view === 'reviewing' && generatedVerdict) {

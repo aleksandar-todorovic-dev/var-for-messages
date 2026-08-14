@@ -16,6 +16,13 @@ export type TriggerMatch = Pick<
   | 'suggest'
 >
 
+function matchesNormalizedPhrase(
+  normalizedMessage: string,
+  normalizedValue: string,
+) {
+  return ` ${normalizedMessage} `.includes(` ${normalizedValue} `)
+}
+
 export function matchCategoryRules(
   locale: Locale,
   message: string,
@@ -34,7 +41,10 @@ export function matchCategoryRules(
 
         return rule.match === 'exact'
           ? normalizedMessage === normalizedValue
-          : normalizedMessage.includes(normalizedValue)
+          : matchesNormalizedPhrase(
+              normalizedMessage,
+              normalizedValue,
+            )
       }),
     )
     .map(

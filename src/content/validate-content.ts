@@ -14,9 +14,9 @@ import { countCharacters } from '../shared/utils/normalize-input'
 const expectedVariantCounts = {
   time_wasting: 4,
   dry_texting: 4,
-  suspicious_excuse: 3,
+  suspicious_excuse: 4,
   planning_foul: 3,
-  emotional_offside: 3,
+  emotional_offside: 4,
   missed_chance: 4,
 } as const
 
@@ -59,6 +59,19 @@ export function validateContentLibrary() {
       if (variants.length !== expectedVariantCount) {
         issues.push(
           `${locale}/${categoryId} must define exactly ${expectedVariantCount} variants.`,
+        )
+      }
+
+      const fallbackVariants = variants.filter(
+        (variant) =>
+          variant.fallback === true ||
+          !variant.triggerIds ||
+          variant.triggerIds.length === 0,
+      )
+
+      if (fallbackVariants.length !== 1) {
+        issues.push(
+          `${locale}/${categoryId} must define exactly 1 safe fallback variant.`,
         )
       }
     }

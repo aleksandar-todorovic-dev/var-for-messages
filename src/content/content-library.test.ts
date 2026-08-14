@@ -14,9 +14,9 @@ import { validateContentLibrary } from './validate-content'
 const expectedVariantCounts = {
   time_wasting: 4,
   dry_texting: 4,
-  suspicious_excuse: 3,
+  suspicious_excuse: 4,
   planning_foul: 3,
-  emotional_offside: 3,
+  emotional_offside: 4,
   missed_chance: 4,
 } as const
 
@@ -25,10 +25,10 @@ describe('content library', () => {
     expect(validateContentLibrary()).toEqual([])
   })
 
-  it('contains six categories and twenty-one variants per locale', () => {
+  it('contains six categories and twenty-three variants per locale', () => {
     for (const locale of locales) {
       expect(getCategories(locale)).toHaveLength(6)
-      expect(getVerdictVariants(locale)).toHaveLength(21)
+      expect(getVerdictVariants(locale)).toHaveLength(23)
 
       for (const categoryId of incidentCategoryIds) {
         expect(

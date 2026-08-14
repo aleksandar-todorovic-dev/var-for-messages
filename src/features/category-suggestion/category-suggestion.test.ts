@@ -1,4 +1,6 @@
 import { describe, expect, it } from 'vitest'
+import { getVerdictVariants } from '../../content'
+import { categoryRules } from './category-rules'
 import { normalizeForMatching } from './normalize-for-matching'
 import { suggestCategory } from './suggest-category'
 
@@ -132,6 +134,34 @@ describe('category suggestion', () => {
       categoryId: 'emotional_offside',
       confidence: 'low',
     })
+  })
+
+  it('matches phrases on normalized token boundaries', () => {
+    expect(suggestCategory('sr', 'Kasnim 25 minuta.')).toEqual({
+      categoryId: null,
+      confidence: 'none',
+      matchedTriggerIds: [],
+    })
+    expect(suggestCategory('en', 'Back in 15 minutes.')).toEqual({
+      categoryId: null,
+      confidence: 'none',
+      matchedTriggerIds: [],
+    })
+  })
+
+  it('maps every category rule to a compatible verdict bundle', () => {
+    for (const rule of categoryRules) {
+      const variants = getVerdictVariants(
+        rule.locale,
+        rule.categoryId,
+      )
+
+      expect(
+        variants.some((variant) =>
+          variant.triggerIds?.includes(rule.triggerId),
+        ),
+      ).toBe(true)
+    }
   })
 
   it('returns no suggestion for an unmatched message', () => {

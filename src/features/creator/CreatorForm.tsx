@@ -222,6 +222,15 @@ export function CreatorForm({
         ) : null}
       </div>
 
+      {creator.errors.generation ? (
+        <p
+          className="field-error creator-form__generation-error"
+          role="alert"
+        >
+          {creator.errors.generation}
+        </p>
+      ) : null}
+
       <div className="creator-form__closing">
         <p
           className="creator-form__privacy"

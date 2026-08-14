@@ -153,6 +153,26 @@ describe('appReducer application flow', () => {
     ).toBe(generatedVerdict.variantId)
   })
 
+  it('clears a stale manual category when the message is emptied', () => {
+    let state = createInitialAppState('sr')
+    state.creator.message = 'Nešto.'
+    state = appReducer(state, {
+      type: 'SELECT_CATEGORY',
+      categoryId: 'planning_foul',
+    })
+
+    const clearedState = appReducer(state, {
+      type: 'SET_MESSAGE',
+      message: '   ',
+    })
+
+    expect(clearedState.creator.message).toBe('   ')
+    expect(clearedState.creator.selectedCategoryId).toBeNull()
+    expect(clearedState.creator.suggestedCategoryId).toBeNull()
+    expect(clearedState.creator.suggestionConfidence).toBe('none')
+    expect(clearedState.creator.categorySelectionSource).toBeNull()
+  })
+
   it('keeps the selected category when locale changes', () => {
     const selectedState = appReducer(createInitialAppState('sr'), {
       type: 'SELECT_CATEGORY',

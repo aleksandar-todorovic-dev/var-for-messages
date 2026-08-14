@@ -89,13 +89,16 @@ export function selectVerdictVariant({
     }
   }
 
-  const genericFallbackVariants = categoryVariants.filter(
-    (variant) => !variant.triggerIds || variant.triggerIds.length === 0,
+  const safeFallbackVariants = categoryVariants.filter(
+    (variant) =>
+      variant.fallback === true ||
+      !variant.triggerIds ||
+      variant.triggerIds.length === 0,
   )
 
-  if (genericFallbackVariants.length > 0) {
+  if (safeFallbackVariants.length > 0) {
     return selectNextFallbackVariant(
-      genericFallbackVariants,
+      safeFallbackVariants,
       lastVariantId,
     )
   }
