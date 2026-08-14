@@ -13,6 +13,7 @@ export type TriggerMatch = Pick<
   | 'confidence'
   | 'priority'
   | 'match'
+  | 'suggest'
 >
 
 export function matchCategoryRules(
@@ -25,7 +26,7 @@ export function matchCategoryRules(
     return []
   }
 
-  return categoryRules
+  return (categoryRules as readonly CategoryRule[])
     .filter((rule) => rule.locale === locale)
     .filter((rule) =>
       rule.values.some((value) => {
@@ -43,6 +44,7 @@ export function matchCategoryRules(
         confidence,
         priority,
         match,
+        suggest,
         locale: ruleLocale,
       }) => ({
         triggerId,
@@ -50,6 +52,7 @@ export function matchCategoryRules(
         confidence,
         priority,
         match,
+        suggest,
         locale: ruleLocale,
       }),
     )

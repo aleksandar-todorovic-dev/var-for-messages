@@ -89,6 +89,17 @@ export function selectVerdictVariant({
     }
   }
 
+  const genericFallbackVariants = categoryVariants.filter(
+    (variant) => !variant.triggerIds || variant.triggerIds.length === 0,
+  )
+
+  if (genericFallbackVariants.length > 0) {
+    return selectNextFallbackVariant(
+      genericFallbackVariants,
+      lastVariantId,
+    )
+  }
+
   return selectNextFallbackVariant(categoryVariants, lastVariantId)
 }
 

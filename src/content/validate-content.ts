@@ -11,6 +11,15 @@ import {
 } from '../shared/types/domain'
 import { countCharacters } from '../shared/utils/normalize-input'
 
+const expectedVariantCounts = {
+  time_wasting: 4,
+  dry_texting: 4,
+  suspicious_excuse: 3,
+  planning_foul: 3,
+  emotional_offside: 3,
+  missed_chance: 4,
+} as const
+
 const contentBudgets = {
   reviewLine: 55,
   sanction: 18,
@@ -45,9 +54,11 @@ export function validateContentLibrary() {
 
       const variants = getVerdictVariants(locale, categoryId)
 
-      if (variants.length !== 3) {
+      const expectedVariantCount = expectedVariantCounts[categoryId]
+
+      if (variants.length !== expectedVariantCount) {
         issues.push(
-          `${locale}/${categoryId} must define exactly 3 variants.`,
+          `${locale}/${categoryId} must define exactly ${expectedVariantCount} variants.`,
         )
       }
     }

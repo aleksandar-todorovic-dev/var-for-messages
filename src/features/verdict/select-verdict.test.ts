@@ -57,31 +57,124 @@ describe('verdict selection', () => {
     expect(variant.categoryId).toBe('dry_texting')
   })
 
-  it('rotates fallback variants in deterministic round-robin order', () => {
+  it('routes common short replies to the generic dry bundle', () => {
+    expect(
+      selectVerdictVariant({
+        locale: 'sr',
+        categoryId: 'dry_texting',
+        message: 'ok',
+      }).id,
+    ).toBe('sr_dry_short_yellow')
+    expect(
+      selectVerdictVariant({
+        locale: 'sr',
+        categoryId: 'dry_texting',
+        message: 'dobro',
+      }).id,
+    ).toBe('sr_dry_short_yellow')
+    expect(
+      selectVerdictVariant({
+        locale: 'en',
+        categoryId: 'dry_texting',
+        message: 'okay',
+      }).id,
+    ).toBe('en_dry_short_yellow')
+    expect(
+      selectVerdictVariant({
+        locale: 'en',
+        categoryId: 'dry_texting',
+        message: 'sure',
+      }).id,
+    ).toBe('en_dry_sure_yellow')
+  })
+
+  it('routes vague arrival updates away from the five-minute-specific bundle', () => {
+    expect(
+      selectVerdictVariant({
+        locale: 'sr',
+        categoryId: 'time_wasting',
+        message: 'Stižem.',
+      }).id,
+    ).toBe('sr_time_status_yellow')
+    expect(
+      selectVerdictVariant({
+        locale: 'en',
+        categoryId: 'time_wasting',
+        message: 'On my way.',
+      }).id,
+    ).toBe('en_time_status_yellow')
+    expect(
+      selectVerdictVariant({
+        locale: 'sr',
+        categoryId: 'time_wasting',
+        message: 'Još malo.',
+      }).id,
+    ).toBe('sr_time_status_yellow')
+    expect(
+      selectVerdictVariant({
+        locale: 'en',
+        categoryId: 'time_wasting',
+        message: 'Almost ready.',
+      }).id,
+    ).toBe('en_time_status_yellow')
+  })
+
+  it('uses routing-only cues without turning them into category suggestions', () => {
+    expect(
+      selectVerdictVariant({
+        locale: 'sr',
+        categoryId: 'missed_chance',
+        message: 'Hahaha.',
+      }).id,
+    ).toBe('sr_missed_flirt_red')
+    expect(
+      selectVerdictVariant({
+        locale: 'en',
+        categoryId: 'missed_chance',
+        message: 'Haha.',
+      }).id,
+    ).toBe('en_missed_flirt_red')
+  })
+
+  it('uses the safe missed-chance fallback when no specific cue matches', () => {
+    expect(
+      selectVerdictVariant({
+        locale: 'sr',
+        categoryId: 'missed_chance',
+        message: 'Promenio je temu.',
+      }).id,
+    ).toBe('sr_missed_generic_yellow')
+    expect(
+      selectVerdictVariant({
+        locale: 'en',
+        categoryId: 'missed_chance',
+        message: 'Changed the subject.',
+      }).id,
+    ).toBe('en_missed_generic_yellow')
+  })
+
+  it('keeps deterministic round-robin fallback where no generic fallback exists', () => {
     const secondVariant = selectVerdictVariant({
       locale: 'sr',
-      categoryId: 'missed_chance',
-      message: 'Promenio je temu.',
-      lastVariantId: 'sr_missed_question_yellow',
+      categoryId: 'planning_foul',
+      message: 'Nešto treće.',
+      lastVariantId: 'sr_plan_anything_red',
     })
-
     const thirdVariant = selectVerdictVariant({
       locale: 'sr',
-      categoryId: 'missed_chance',
-      message: 'Promenio je temu.',
+      categoryId: 'planning_foul',
+      message: 'Nešto treće.',
       lastVariantId: secondVariant.id,
     })
-
     const wrappedVariant = selectVerdictVariant({
       locale: 'sr',
-      categoryId: 'missed_chance',
-      message: 'Promenio je temu.',
+      categoryId: 'planning_foul',
+      message: 'Nešto treće.',
       lastVariantId: thirdVariant.id,
     })
-
-    expect(secondVariant.id).toBe('sr_missed_flirt_red')
-    expect(thirdVariant.id).toBe('sr_missed_side_yellow')
-    expect(wrappedVariant.id).toBe('sr_missed_question_yellow')
+    expect(secondVariant.id).toBe('sr_plan_choose_yellow')
+    expect(thirdVariant.id).toBe('sr_plan_veto_red')
+    expect(wrappedVariant.id).toBe('sr_plan_anything_red')
   })
 
   it('assembles one complete generated verdict', () => {

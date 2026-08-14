@@ -15,7 +15,9 @@ export function suggestCategory(
   locale: Locale,
   message: string,
 ): CategorySuggestion {
-  const matches = matchCategoryRules(locale, message)
+  const matches = matchCategoryRules(locale, message).filter(
+    (match) => match.suggest !== false,
+  )
 
   if (matches.length === 0) {
     return {

@@ -65,6 +65,53 @@ describe('category suggestion', () => {
     })
   })
 
+  it('routes a common short Serbian reply without pretending it was važi', () => {
+    expect(suggestCategory('sr', 'OK.')).toEqual({
+      categoryId: 'dry_texting',
+      confidence: 'high',
+      matchedTriggerIds: ['sr_short_reply'],
+    })
+  })
+
+  it('keeps contextual-only dry and missed-chance cues out of auto-suggestion', () => {
+    expect(suggestCategory('sr', 'Dobro.')).toEqual({
+      categoryId: null,
+      confidence: 'none',
+      matchedTriggerIds: [],
+    })
+    expect(suggestCategory('sr', 'Hahaha.')).toEqual({
+      categoryId: null,
+      confidence: 'none',
+      matchedTriggerIds: [],
+    })
+    expect(suggestCategory('sr', 'Još malo.')).toEqual({
+      categoryId: null,
+      confidence: 'none',
+      matchedTriggerIds: [],
+    })
+    expect(suggestCategory('sr', 'Sad ću.')).toEqual({
+      categoryId: null,
+      confidence: 'none',
+      matchedTriggerIds: [],
+    })
+    expect(suggestCategory('en', 'Almost ready.')).toEqual({
+      categoryId: null,
+      confidence: 'none',
+      matchedTriggerIds: [],
+    })
+  })
+
+  it('recognizes expanded planning and emotional-offside phrasing', () => {
+    expect(suggestCategory('sr', 'Ne tad, ne tamo.')).toMatchObject({
+      categoryId: 'planning_foul',
+      confidence: 'low',
+    })
+    expect(suggestCategory('sr', 'Kuda ovo vodi?')).toMatchObject({
+      categoryId: 'emotional_offside',
+      confidence: 'low',
+    })
+  })
+
   it('returns no suggestion for an unmatched message', () => {
     expect(suggestCategory('sr', 'Vidimo se sutra.')).toEqual({
       categoryId: null,
