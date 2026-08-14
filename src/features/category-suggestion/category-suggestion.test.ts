@@ -99,6 +99,28 @@ describe('category suggestion', () => {
       confidence: 'none',
       matchedTriggerIds: [],
     })
+
+    // Broad observational phrases must not become high-confidence excuse suggestions.
+    expect(suggestCategory('sr', 'Nisam primetio novu frizuru.')).toEqual({
+      categoryId: null,
+      confidence: 'none',
+      matchedTriggerIds: [],
+    })
+    expect(suggestCategory('sr', 'E sad vidim šta si mislio.')).toEqual({
+      categoryId: null,
+      confidence: 'none',
+      matchedTriggerIds: [],
+    })
+    expect(suggestCategory('en', "Didn't notice the typo.")).toEqual({
+      categoryId: null,
+      confidence: 'none',
+      matchedTriggerIds: [],
+    })
+    expect(suggestCategory('en', 'Seeing this now makes sense.')).toEqual({
+      categoryId: null,
+      confidence: 'none',
+      matchedTriggerIds: [],
+    })
   })
 
   it('recognizes expanded planning and emotional-offside phrasing', () => {
