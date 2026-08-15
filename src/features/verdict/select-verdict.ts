@@ -39,25 +39,6 @@ function excludeLastVariant(
   return alternatives.length > 0 ? alternatives : variants
 }
 
-function selectNextFallbackVariant(
-  variants: readonly VerdictVariant[],
-  lastVariantId?: string,
-) {
-  if (!lastVariantId || variants.length <= 1) {
-    return variants[0]
-  }
-
-  const lastVariantIndex = variants.findIndex(
-    (variant) => variant.id === lastVariantId,
-  )
-
-  if (lastVariantIndex === -1) {
-    return variants[0]
-  }
-
-  return variants[(lastVariantIndex + 1) % variants.length]
-}
-
 export function selectVerdictVariant({
   locale,
   categoryId,
@@ -89,7 +70,17 @@ export function selectVerdictVariant({
     }
   }
 
-  return selectNextFallbackVariant(categoryVariants, lastVariantId)
+  const safeFallbackVariant = categoryVariants.find(
+    (variant) => variant.fallback === true,
+  )
+
+  if (!safeFallbackVariant) {
+    throw new Error(
+      `Missing safe fallback for ${locale}/${categoryId}.`,
+    )
+  }
+
+  return safeFallbackVariant
 }
 
 export function generateVerdict({

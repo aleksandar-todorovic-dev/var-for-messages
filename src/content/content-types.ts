@@ -19,6 +19,7 @@ export type VerdictVariant = {
   severity: LaunchSeverity
   triggerIds?: readonly string[]
   priority?: number
+  fallback?: boolean
 
   reviewLine: string
   sanction: string

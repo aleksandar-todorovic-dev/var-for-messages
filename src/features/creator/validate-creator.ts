@@ -2,6 +2,7 @@ import type { UiCopy } from '../../content'
 import {
   countCharacters,
   normalizeMessageForDisplay,
+  normalizePlayerName,
 } from '../../shared/utils/normalize-input'
 import type {
   CreatorFieldErrors,
@@ -19,6 +20,9 @@ export function validateCreator(
   const normalizedMessage = normalizeMessageForDisplay(
     creator.message,
   )
+  const normalizedPlayerName = normalizePlayerName(
+    creator.playerName,
+  )
 
   if (!normalizedMessage) {
     errors.message = copy.validation.emptyMessage
@@ -29,7 +33,7 @@ export function validateCreator(
   }
 
   if (
-    countCharacters(creator.playerName.trim()) >
+    countCharacters(normalizedPlayerName) >
     PLAYER_NAME_LIMIT
   ) {
     errors.playerName = copy.validation.playerNameTooLong

@@ -79,6 +79,57 @@ describe('appReducer application flow', () => {
     )
   })
 
+  it('clears suggestion-derived selection when the message changes', () => {
+    let state = appReducer(createInitialAppState('en'), {
+      type: 'APPLY_CATEGORY_SUGGESTION',
+      categoryId: 'dry_texting',
+      confidence: 'high',
+    })
+
+    state = appReducer(state, {
+      type: 'SET_MESSAGE',
+      message: 'On my way.',
+    })
+
+    expect(state.creator.selectedCategoryId).toBeNull()
+    expect(state.creator.suggestedCategoryId).toBeNull()
+    expect(state.creator.categorySelectionSource).toBeNull()
+  })
+
+  it('preserves a manual selection while editing a nonempty message', () => {
+    let state = appReducer(createInitialAppState('sr'), {
+      type: 'SELECT_CATEGORY',
+      categoryId: 'planning_foul',
+    })
+
+    state = appReducer(state, {
+      type: 'SET_MESSAGE',
+      message: 'Nova poruka.',
+    })
+
+    expect(state.creator.selectedCategoryId).toBe('planning_foul')
+    expect(state.creator.categorySelectionSource).toBe('manual')
+  })
+
+  it('keeps a category validation error until a real selection resolves it', () => {
+    let state = createInitialAppState('sr')
+    state.creator.message = 'Nema automatskog podudaranja.'
+    state = appReducer(state, {
+      type: 'VALIDATION_FAILED',
+      errors: { category: 'Izaberi incident.' },
+    })
+
+    const noMatchState = appReducer(state, {
+      type: 'APPLY_CATEGORY_SUGGESTION',
+      categoryId: null,
+      confidence: 'none',
+    })
+
+    expect(noMatchState.creator.errors.category).toBe(
+      'Izaberi incident.',
+    )
+  })
+
   it('starts review and stores session history', () => {
     const state = createReviewingState()
 
@@ -151,6 +202,44 @@ describe('appReducer application flow', () => {
     expect(
       nextState.session.lastVariantIdByCategory.dry_texting,
     ).toBe(generatedVerdict.variantId)
+  })
+
+  it('clears a stale manual category when the message is emptied', () => {
+    let state = createInitialAppState('sr')
+    state.creator.message = 'Nešto.'
+    state = appReducer(state, {
+      type: 'SELECT_CATEGORY',
+      categoryId: 'planning_foul',
+    })
+
+    const clearedState = appReducer(state, {
+      type: 'SET_MESSAGE',
+      message: '   ',
+    })
+
+    expect(clearedState.creator.message).toBe('   ')
+    expect(clearedState.creator.selectedCategoryId).toBeNull()
+    expect(clearedState.creator.suggestedCategoryId).toBeNull()
+    expect(clearedState.creator.suggestionConfidence).toBe('none')
+    expect(clearedState.creator.categorySelectionSource).toBeNull()
+  })
+
+  it('clears suggestion-derived selection when locale changes', () => {
+    let state = appReducer(createInitialAppState('en'), {
+      type: 'APPLY_CATEGORY_SUGGESTION',
+      categoryId: 'dry_texting',
+      confidence: 'high',
+    })
+
+    state = appReducer(state, {
+      type: 'SET_LOCALE',
+      locale: 'sr',
+    })
+
+    expect(state.creator.locale).toBe('sr')
+    expect(state.creator.selectedCategoryId).toBeNull()
+    expect(state.creator.suggestedCategoryId).toBeNull()
+    expect(state.creator.categorySelectionSource).toBeNull()
   })
 
   it('keeps the selected category when locale changes', () => {

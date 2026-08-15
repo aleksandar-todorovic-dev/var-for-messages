@@ -11,20 +11,29 @@ import {
 } from '../shared/types/domain'
 import { validateContentLibrary } from './validate-content'
 
+const expectedVariantCounts = {
+  time_wasting: 5,
+  dry_texting: 5,
+  suspicious_excuse: 4,
+  planning_foul: 4,
+  emotional_offside: 4,
+  missed_chance: 4,
+} as const
+
 describe('content library', () => {
   it('passes the complete content contract', () => {
     expect(validateContentLibrary()).toEqual([])
   })
 
-  it('contains six categories and eighteen variants per locale', () => {
+  it('contains six categories and twenty-six variants per locale', () => {
     for (const locale of locales) {
       expect(getCategories(locale)).toHaveLength(6)
-      expect(getVerdictVariants(locale)).toHaveLength(18)
+      expect(getVerdictVariants(locale)).toHaveLength(26)
 
       for (const categoryId of incidentCategoryIds) {
         expect(
           getVerdictVariants(locale, categoryId),
-        ).toHaveLength(3)
+        ).toHaveLength(expectedVariantCounts[categoryId])
       }
     }
   })

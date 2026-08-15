@@ -112,15 +112,36 @@ export async function createVerdictImage(
 
 export function downloadVerdictFile(file: File) {
   const objectUrl = URL.createObjectURL(file)
-  const link = document.createElement('a')
+  let link: HTMLAnchorElement | null = null
+  let initiationError: unknown
+  let initiationFailed = false
 
-  link.href = objectUrl
-  link.download = file.name
-  document.body.append(link)
-  link.click()
-  link.remove()
+  try {
+    link = document.createElement('a')
+    link.href = objectUrl
+    link.download = file.name
+    document.body.append(link)
+    link.click()
+  } catch (error) {
+    initiationError = error
+    initiationFailed = true
+  } finally {
+    try {
+      link?.remove()
+    } catch {
+      try {
+        link?.parentNode?.removeChild(link)
+      } catch {
+        // Revocation and the original failure take precedence.
+      }
+    }
 
-  window.setTimeout(() => {
-    URL.revokeObjectURL(objectUrl)
-  }, 0)
+    window.setTimeout(() => {
+      URL.revokeObjectURL(objectUrl)
+    }, 0)
+  }
+
+  if (initiationFailed) {
+    throw initiationError
+  }
 }

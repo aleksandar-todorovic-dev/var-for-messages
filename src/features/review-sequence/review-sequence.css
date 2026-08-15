@@ -141,6 +141,8 @@
 .review-sequence blockquote {
   max-width: 27ch;
   margin: 0;
+  overflow-wrap: anywhere;
+  word-break: break-word;
   font-size: clamp(1.7rem, 4.5vw, 3.6rem);
   font-weight: 750;
   line-height: 1.02;

@@ -44,6 +44,49 @@ describe('validateCreator', () => {
     expect(hasCreatorErrors(errors)).toBe(false)
   })
 
+  it('rejects visually empty zero-width-only messages', () => {
+    const state = createInitialAppState('sr')
+    state.creator.message = '​'
+    state.creator.selectedCategoryId = 'dry_texting'
+
+    const errors = validateCreator(
+      state.creator,
+      getUiCopy('sr'),
+    )
+
+    expect(errors.message).toBe(
+      getUiCopy('sr').validation.emptyMessage,
+    )
+  })
+
+  it('rejects visually empty variation-selector-only messages', () => {
+    const state = createInitialAppState('en')
+    state.creator.message = '\uFE0F'
+    state.creator.selectedCategoryId = 'dry_texting'
+
+    const errors = validateCreator(
+      state.creator,
+      getUiCopy('en'),
+    )
+
+    expect(errors.message).toBe(
+      getUiCopy('en').validation.emptyMessage,
+    )
+  })
+
+  it('validates the same trimmed message content shown by the counter', () => {
+    const state = createInitialAppState('en')
+    state.creator.message = `${' '.repeat(141)}ok`
+    state.creator.selectedCategoryId = 'dry_texting'
+
+    const errors = validateCreator(
+      state.creator,
+      getUiCopy('en'),
+    )
+
+    expect(errors.message).toBeUndefined()
+  })
+
   it('uses Unicode-aware message limits', () => {
     const state = createInitialAppState('en')
     state.creator.message = '😀'.repeat(141)
@@ -71,5 +114,19 @@ describe('validateCreator', () => {
     )
 
     expect(errors.playerName).toBeDefined()
+  })
+
+  it('accepts 24 visible player-name characters with edge format padding', () => {
+    const state = createInitialAppState('en')
+    state.creator.message = 'ok'
+    state.creator.playerName = `\u200B${'A'.repeat(24)}`
+    state.creator.selectedCategoryId = 'dry_texting'
+
+    const errors = validateCreator(
+      state.creator,
+      getUiCopy('en'),
+    )
+
+    expect(errors.playerName).toBeUndefined()
   })
 })

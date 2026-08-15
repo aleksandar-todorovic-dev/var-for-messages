@@ -17,7 +17,7 @@ export const srUiCopy = {
   playerNameLabel: 'Ime igrača — opciono',
 
   privacyNote:
-    'Ne unosi privatne podatke. Poruka ostaje u tvom browseru.',
+    'Poruka i ime ostaju u tvom browseru. Ne unosi osetljive ili privatne podatke i koristi samo sadržaj koji smeš da koristiš i deliš.',
 
   reviewButton: 'Pregledaj incident',
 
@@ -93,7 +93,7 @@ export const enUiCopy = {
   playerNameLabel: 'Player name — optional',
 
   privacyNote:
-    'Avoid private details. Your message stays in your browser.',
+    'Your message and player name stay in your browser. Do not enter sensitive or private information, and only use content you are allowed to use and share.',
 
   reviewButton: 'Review incident',
 

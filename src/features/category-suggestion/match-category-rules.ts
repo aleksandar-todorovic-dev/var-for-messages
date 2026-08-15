@@ -13,7 +13,15 @@ export type TriggerMatch = Pick<
   | 'confidence'
   | 'priority'
   | 'match'
+  | 'suggest'
 >
+
+function matchesNormalizedPhrase(
+  normalizedMessage: string,
+  normalizedValue: string,
+) {
+  return ` ${normalizedMessage} `.includes(` ${normalizedValue} `)
+}
 
 export function matchCategoryRules(
   locale: Locale,
@@ -25,7 +33,7 @@ export function matchCategoryRules(
     return []
   }
 
-  return categoryRules
+  return (categoryRules as readonly CategoryRule[])
     .filter((rule) => rule.locale === locale)
     .filter((rule) =>
       rule.values.some((value) => {
@@ -33,7 +41,10 @@ export function matchCategoryRules(
 
         return rule.match === 'exact'
           ? normalizedMessage === normalizedValue
-          : normalizedMessage.includes(normalizedValue)
+          : matchesNormalizedPhrase(
+              normalizedMessage,
+              normalizedValue,
+            )
       }),
     )
     .map(
@@ -43,6 +54,7 @@ export function matchCategoryRules(
         confidence,
         priority,
         match,
+        suggest,
         locale: ruleLocale,
       }) => ({
         triggerId,
@@ -50,6 +62,7 @@ export function matchCategoryRules(
         confidence,
         priority,
         match,
+        suggest,
         locale: ruleLocale,
       }),
     )

@@ -50,7 +50,6 @@ function App() {
   const lastSuggestionEventRef = useRef('')
 
   useEffect(() => {
-    persistLocale(creator.locale)
     document.documentElement.lang =
       creator.locale === 'sr' ? 'sr-Latn' : 'en'
   }, [creator.locale])
@@ -69,12 +68,19 @@ function App() {
   }, [creator.locale])
 
   useEffect(() => {
+    if (
+      view === 'create' &&
+      creatorEntryFocus === 'message'
+    ) {
+      return
+    }
+
     window.scrollTo({
       top: 0,
       left: 0,
       behavior: 'auto',
     })
-  }, [view])
+  }, [view, creatorEntryFocus])
 
   useEffect(() => {
     if (view !== 'create') {
@@ -134,6 +140,8 @@ function App() {
   }, [view, creator.locale, creator.message])
 
   function handleLocaleChange(locale: Locale) {
+    persistLocale(locale)
+
     if (locale === creator.locale) {
       return
     }
@@ -167,42 +175,109 @@ function App() {
   }
 
   function handleSubmit(): CreatorFieldErrors {
-    const errors = validateCreator(creator, copy)
+    const manualSelection =
+      creator.categorySelectionSource === 'manual'
+    let categoryId = manualSelection
+      ? creator.selectedCategoryId
+      : null
+    let creatorForValidation = {
+      ...creator,
+      selectedCategoryId: categoryId,
+    }
+
+    if (!manualSelection && creator.message.trim()) {
+      const immediateSuggestion = suggestCategory(
+        creator.locale,
+        creator.message,
+      )
+
+      categoryId =
+        immediateSuggestion.confidence === 'high'
+          ? immediateSuggestion.categoryId
+          : null
+      creatorForValidation = {
+        ...creator,
+        selectedCategoryId: categoryId,
+      }
+
+      dispatch({
+        type: 'APPLY_CATEGORY_SUGGESTION',
+        categoryId: immediateSuggestion.categoryId,
+        confidence: immediateSuggestion.confidence,
+      })
+
+      if (
+        immediateSuggestion.categoryId &&
+        immediateSuggestion.confidence !== 'none'
+      ) {
+        const eventKey = [
+          creator.locale,
+          immediateSuggestion.categoryId,
+          immediateSuggestion.confidence,
+        ].join(':')
+
+        if (eventKey !== lastSuggestionEventRef.current) {
+          lastSuggestionEventRef.current = eventKey
+
+          track('category_suggested', {
+            locale: creator.locale,
+            categoryId: immediateSuggestion.categoryId,
+            confidence: immediateSuggestion.confidence,
+          })
+        }
+      }
+    }
+
+    const errors = validateCreator(
+      creatorForValidation,
+      copy,
+    )
 
     if (hasCreatorErrors(errors)) {
       dispatch({ type: 'VALIDATION_FAILED', errors })
       return errors
     }
 
-    const categoryId = creator.selectedCategoryId
-
     if (!categoryId) {
       return errors
     }
 
-    const verdict = generateVerdict({
-      locale: creator.locale,
-      categoryId,
-      message: creator.message,
-      playerName: creator.playerName,
-      lastVariantId:
-        session.lastVariantIdByCategory[categoryId],
-      caseOccurrence: session.generatedCount + 1,
-    })
+    try {
+      const verdict = generateVerdict({
+        locale: creator.locale,
+        categoryId,
+        message: creator.message,
+        playerName: creator.playerName,
+        lastVariantId:
+          session.lastVariantIdByCategory[categoryId],
+        caseOccurrence: session.generatedCount + 1,
+      })
 
-    track('verdict_generated', {
-      locale: verdict.locale,
-      categoryId: verdict.categoryId,
-      severity: verdict.severity,
-      generatedCount: session.generatedCount + 1,
-    })
+      track('verdict_generated', {
+        locale: verdict.locale,
+        categoryId: verdict.categoryId,
+        severity: verdict.severity,
+        generatedCount: session.generatedCount + 1,
+      })
 
-    dispatch({
-      type: 'START_REVIEW',
-      verdict,
-    })
+      dispatch({
+        type: 'START_REVIEW',
+        verdict,
+      })
 
-    return {}
+      return {}
+    } catch {
+      const generationErrors: CreatorFieldErrors = {
+        generation: copy.errors.generation,
+      }
+
+      dispatch({
+        type: 'VALIDATION_FAILED',
+        errors: generationErrors,
+      })
+
+      return generationErrors
+    }
   }
 
   if (view === 'reviewing' && generatedVerdict) {

@@ -3,7 +3,7 @@
 VAR for Messages is a mobile-first React app that turns an ordinary chat
 message into an absurdly serious football-style VAR ruling.
 
-**Live app:** https://var-for-messages.vercel.app/
+**Live app:** https://varformessages.com/
 
 ## Current status
 
@@ -20,7 +20,7 @@ The app currently supports:
 - deterministic category suggestions;
 - manual category override;
 - 6 incident categories;
-- 36 curated SR/EN verdict bundles;
+- 52 curated SR/EN verdict bundles;
 - a short `scan → lock → reveal` review sequence;
 - red and yellow verdict cards;
 - exact `1080 × 1350` PNG export;

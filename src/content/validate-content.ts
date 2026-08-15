@@ -11,6 +11,15 @@ import {
 } from '../shared/types/domain'
 import { countCharacters } from '../shared/utils/normalize-input'
 
+const expectedVariantCounts = {
+  time_wasting: 5,
+  dry_texting: 5,
+  suspicious_excuse: 4,
+  planning_foul: 4,
+  emotional_offside: 4,
+  missed_chance: 4,
+} as const
+
 const contentBudgets = {
   reviewLine: 55,
   sanction: 18,
@@ -45,9 +54,31 @@ export function validateContentLibrary() {
 
       const variants = getVerdictVariants(locale, categoryId)
 
-      if (variants.length !== 3) {
+      const expectedVariantCount = expectedVariantCounts[categoryId]
+
+      if (variants.length !== expectedVariantCount) {
         issues.push(
-          `${locale}/${categoryId} must define exactly 3 variants.`,
+          `${locale}/${categoryId} must define exactly ${expectedVariantCount} variants.`,
+        )
+      }
+
+      const fallbackVariants = variants.filter(
+        (variant) => variant.fallback === true,
+      )
+
+      if (fallbackVariants.length !== 1) {
+        issues.push(
+          `${locale}/${categoryId} must define exactly 1 safe fallback variant.`,
+        )
+      }
+
+      if (
+        fallbackVariants.some(
+          (variant) => (variant.triggerIds?.length ?? 0) > 0,
+        )
+      ) {
+        issues.push(
+          `${locale}/${categoryId} fallback must not have trigger IDs.`,
         )
       }
     }

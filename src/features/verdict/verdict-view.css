@@ -247,7 +247,7 @@
   color: #ff9aa3;
 }
 
-@media (max-width: 850px) {
+@media (max-width: 1101px) {
   .verdict-view__layout {
     grid-template-columns: minmax(0, 34rem);
     justify-content: center;
