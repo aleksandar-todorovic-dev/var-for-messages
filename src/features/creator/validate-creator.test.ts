@@ -100,4 +100,18 @@ describe('validateCreator', () => {
 
     expect(errors.playerName).toBeDefined()
   })
+
+  it('accepts 24 visible player-name characters with edge format padding', () => {
+    const state = createInitialAppState('en')
+    state.creator.message = 'ok'
+    state.creator.playerName = `\u200B${'A'.repeat(24)}`
+    state.creator.selectedCategoryId = 'dry_texting'
+
+    const errors = validateCreator(
+      state.creator,
+      getUiCopy('en'),
+    )
+
+    expect(errors.playerName).toBeUndefined()
+  })
 })

@@ -1,4 +1,4 @@
-import { useRef } from 'react'
+import { useEffect, useRef } from 'react'
 import {
   getCategories,
   getUiCopy,
@@ -61,6 +61,47 @@ export function CreatorView({
   )
   const messageInputRef = useRef<HTMLTextAreaElement>(null)
   const reducedMotion = useReducedMotion()
+
+  useEffect(() => {
+    if (entryFocus !== 'message') {
+      return
+    }
+
+    const messageInput = messageInputRef.current
+
+    if (!messageInput) {
+      return
+    }
+
+    const scrollMessageIntoView = () => {
+      if (document.activeElement !== messageInput) {
+        return
+      }
+
+      messageInput.scrollIntoView({
+        behavior: 'auto',
+        block: 'center',
+      })
+    }
+
+    const animationFrame = window.requestAnimationFrame(
+      scrollMessageIntoView,
+    )
+    const visualViewport = window.visualViewport
+
+    visualViewport?.addEventListener(
+      'resize',
+      scrollMessageIntoView,
+    )
+
+    return () => {
+      window.cancelAnimationFrame(animationFrame)
+      visualViewport?.removeEventListener(
+        'resize',
+        scrollMessageIntoView,
+      )
+    }
+  }, [entryFocus])
 
   if (!demoVariant) {
     throw new Error(

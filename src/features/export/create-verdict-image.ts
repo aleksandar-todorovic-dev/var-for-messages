@@ -112,16 +112,16 @@ export async function createVerdictImage(
 
 export function downloadVerdictFile(file: File) {
   const objectUrl = URL.createObjectURL(file)
-  const link = document.createElement('a')
-
-  link.href = objectUrl
-  link.download = file.name
-  document.body.append(link)
+  let link: HTMLAnchorElement | null = null
 
   try {
+    link = document.createElement('a')
+    link.href = objectUrl
+    link.download = file.name
+    document.body.append(link)
     link.click()
   } finally {
-    link.remove()
+    link?.remove()
 
     window.setTimeout(() => {
       URL.revokeObjectURL(objectUrl)

@@ -9,6 +9,22 @@ describe('category suggestion', () => {
     expect(normalizeForMatching('  VAŽI.  ')).toBe('vazi')
   })
 
+  it('ignores edge format characters without removing internal emoji joiners', () => {
+    expect(normalizeForMatching('\u200B')).toBe('')
+    expect(normalizeForMatching('\u200BVAŽI.\u200B')).toBe('vazi')
+    expect(normalizeForMatching('👨‍👩‍👧‍👦')).toBe('👨‍👩‍👧‍👦')
+  })
+
+  it('matches concise replies padded with edge format characters', () => {
+    for (const message of ['\u200Bok', 'ok\u200B']) {
+      expect(suggestCategory('en', message)).toEqual({
+        categoryId: 'dry_texting',
+        confidence: 'high',
+        matchedTriggerIds: ['en_short_reply'],
+      })
+    }
+  })
+
   it('recognizes a high-confidence dry reply', () => {
     expect(suggestCategory('sr', 'Važi.')).toEqual({
       categoryId: 'dry_texting',
