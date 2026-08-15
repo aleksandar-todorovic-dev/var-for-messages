@@ -4,7 +4,7 @@ export function countCharacters(value: string) {
 
 function trimIgnorableEdges(value: string) {
   return value.replace(
-    /^[\s\p{Cf}]+|[\s\p{Cf}]+$/gu,
+    /^[\s\p{Cf}\p{Variation_Selector}]+|[\s\p{Cf}]+$/gu,
     '',
   )
 }

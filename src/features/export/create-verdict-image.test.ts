@@ -11,11 +11,18 @@ afterEach(() => {
 function stubDownloadEnvironment({
   appendError,
   clickError,
+  removeError,
 }: {
   appendError?: Error
   clickError?: Error
+  removeError?: Error
 } = {}) {
-  const remove = vi.fn()
+  const removeChild = vi.fn()
+  const remove = vi.fn(() => {
+    if (removeError) {
+      throw removeError
+    }
+  })
   const revokeObjectURL = vi.fn()
   const click = vi.fn(() => {
     if (clickError) {
@@ -27,6 +34,7 @@ function stubDownloadEnvironment({
     download: '',
     click,
     remove,
+    parentNode: { removeChild },
   }
   const append = vi.fn(() => {
     if (appendError) {
@@ -54,6 +62,7 @@ function stubDownloadEnvironment({
     click,
     link,
     remove,
+    removeChild,
     revokeObjectURL,
   }
 }
@@ -120,5 +129,42 @@ describe('createVerdictFileName', () => {
     expect(environment.revokeObjectURL).toHaveBeenCalledWith(
       'blob:test',
     )
+  })
+
+  it('preserves the click failure and revokes the URL when removal fails', () => {
+    const clickError = new Error('download blocked')
+    const environment = stubDownloadEnvironment({
+      clickError,
+      removeError: new Error('remove blocked'),
+    })
+
+    expect(() =>
+      downloadVerdictFile({ name: 'test.png' } as File),
+    ).toThrow(clickError)
+    expect(environment.remove).toHaveBeenCalledOnce()
+    expect(environment.removeChild).toHaveBeenCalledWith(
+      environment.link,
+    )
+    expect(environment.revokeObjectURL).toHaveBeenCalledWith(
+      'blob:test',
+    )
+  })
+
+  it('allows a retry after a failed download initiation', () => {
+    const environment = stubDownloadEnvironment()
+    environment.click.mockImplementationOnce(() => {
+      throw new Error('download blocked')
+    })
+
+    expect(() =>
+      downloadVerdictFile({ name: 'test.png' } as File),
+    ).toThrow('download blocked')
+    expect(() =>
+      downloadVerdictFile({ name: 'test.png' } as File),
+    ).not.toThrow()
+    expect(environment.append).toHaveBeenCalledTimes(2)
+    expect(environment.click).toHaveBeenCalledTimes(2)
+    expect(environment.remove).toHaveBeenCalledTimes(2)
+    expect(environment.revokeObjectURL).toHaveBeenCalledTimes(2)
   })
 })

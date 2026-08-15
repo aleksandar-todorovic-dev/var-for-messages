@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { getVerdictVariants } from '../../content'
+import { normalizeMessageForDisplay } from '../../shared/utils/normalize-input'
 import { categoryRules } from './category-rules'
 import { normalizeForMatching } from './normalize-for-matching'
 import { suggestCategory } from './suggest-category'
@@ -13,6 +14,18 @@ describe('category suggestion', () => {
     expect(normalizeForMatching('\u200B')).toBe('')
     expect(normalizeForMatching('\u200BVAŽI.\u200B')).toBe('vazi')
     expect(normalizeForMatching('👨‍👩‍👧‍👦')).toBe('👨‍👩‍👧‍👦')
+  })
+
+  it('treats standalone variation selectors as empty without damaging emoji sequences', () => {
+    const heart = '❤️'
+    const joinedEmoji = '👩‍❤️‍💋‍👩'
+
+    expect(normalizeMessageForDisplay('\uFE0F')).toBe('')
+    expect(normalizeForMatching('\uFE0F')).toBe('')
+    expect(normalizeMessageForDisplay(heart)).toBe(heart)
+    expect(normalizeMessageForDisplay(joinedEmoji)).toBe(
+      joinedEmoji,
+    )
   })
 
   it('matches concise replies padded with edge format characters', () => {

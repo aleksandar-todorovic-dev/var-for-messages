@@ -59,6 +59,21 @@ describe('validateCreator', () => {
     )
   })
 
+  it('rejects visually empty variation-selector-only messages', () => {
+    const state = createInitialAppState('en')
+    state.creator.message = '\uFE0F'
+    state.creator.selectedCategoryId = 'dry_texting'
+
+    const errors = validateCreator(
+      state.creator,
+      getUiCopy('en'),
+    )
+
+    expect(errors.message).toBe(
+      getUiCopy('en').validation.emptyMessage,
+    )
+  })
+
   it('validates the same trimmed message content shown by the counter', () => {
     const state = createInitialAppState('en')
     state.creator.message = `${' '.repeat(141)}ok`
