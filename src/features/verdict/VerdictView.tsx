@@ -207,29 +207,23 @@ export function VerdictView({
 
       <section className="verdict-view__layout">
         <div className="verdict-view__card">
+          <h1
+            ref={headingRef}
+            className="verdict-view__announcement"
+            tabIndex={-1}
+          >
+            {verdict.sanction}
+          </h1>
+
           <VerdictCard {...cardContent} />
         </div>
 
         <aside className="verdict-view__actions">
-          <div className="verdict-view__decision-summary">
-            <p className="verdict-view__kicker">
-              {copy.card.finalDecisionLabel}
-            </p>
-
-            <h1 ref={headingRef} tabIndex={-1}>
-              {verdict.sanction}
-            </h1>
-
-            <p className="verdict-view__offense">
-              {verdict.offense}
-            </p>
-
-            <div className="verdict-view__meta">
-              <span>{category?.label ?? verdict.offense}</span>
-              <span>
-                {copy.card.caseLabel} {verdict.caseId}
-              </span>
-            </div>
+          <div className="verdict-view__meta">
+            <span>{category?.label ?? verdict.offense}</span>
+            <span>
+              {copy.card.caseLabel} {verdict.caseId}
+            </span>
           </div>
 
           <div className="verdict-view__primary-action-zone">
