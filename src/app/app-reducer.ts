@@ -4,6 +4,7 @@ import type {
   Locale,
   SuggestionConfidence,
 } from '../shared/types/domain'
+import { normalizeMessageForDisplay } from '../shared/utils/normalize-input'
 import type {
   AppState,
   CreatorFieldErrors,
@@ -43,51 +44,66 @@ export function appReducer(
   action: AppAction,
 ): AppState {
   switch (action.type) {
-    case 'SET_LOCALE':
+    case 'SET_LOCALE': {
       if (!isCreateView(state)) {
         return state
       }
+
+      const manualSelection =
+        state.creator.categorySelectionSource === 'manual'
 
       return {
         ...state,
         creator: {
           ...state.creator,
           locale: action.locale,
+          suggestedCategoryId: null,
+          selectedCategoryId: manualSelection
+            ? state.creator.selectedCategoryId
+            : null,
+          suggestionConfidence: 'none',
+          categorySelectionSource: manualSelection
+            ? 'manual'
+            : null,
           errors: {},
         },
         generatedVerdict: null,
       }
+    }
 
     case 'SET_MESSAGE': {
       if (!isCreateView(state)) {
         return state
       }
 
-      const messageCleared = !action.message.trim()
+      const messageCleared = !normalizeMessageForDisplay(
+        action.message,
+      )
+      const manualSelection =
+        state.creator.categorySelectionSource === 'manual'
+      const keepManualSelection =
+        !messageCleared && manualSelection
 
       return {
         ...state,
         creator: {
           ...state.creator,
           message: action.message,
-          suggestedCategoryId: messageCleared
-            ? null
-            : state.creator.suggestedCategoryId,
-          selectedCategoryId: messageCleared
-            ? null
-            : state.creator.selectedCategoryId,
-          suggestionConfidence: messageCleared
-            ? 'none'
-            : state.creator.suggestionConfidence,
-          categorySelectionSource: messageCleared
-            ? null
-            : state.creator.categorySelectionSource,
+          suggestedCategoryId: null,
+          selectedCategoryId: keepManualSelection
+            ? state.creator.selectedCategoryId
+            : null,
+          suggestionConfidence: 'none',
+          categorySelectionSource: keepManualSelection
+            ? 'manual'
+            : null,
           errors: {
             ...state.creator.errors,
             message: undefined,
-            category: messageCleared
-              ? undefined
-              : state.creator.errors.category,
+            category:
+              messageCleared || keepManualSelection
+                ? undefined
+                : state.creator.errors.category,
             generation: undefined,
           },
         },
@@ -145,8 +161,10 @@ export function appReducer(
               : null,
           errors: {
             ...state.creator.errors,
-            category: undefined,
-            generation: undefined,
+            category:
+              manualSelection || shouldAutoSelect
+                ? undefined
+                : state.creator.errors.category,
           },
         },
       }

@@ -21,7 +21,7 @@ describe('category suggestion', () => {
     expect(suggestCategory('sr', 'Krećem sad!')).toEqual({
       categoryId: 'time_wasting',
       confidence: 'high',
-      matchedTriggerIds: ['sr_leaving_now', 'sr_on_my_way'],
+      matchedTriggerIds: ['sr_leaving_now'],
     })
   })
 
@@ -122,6 +122,37 @@ describe('category suggestion', () => {
       categoryId: null,
       confidence: 'none',
       matchedTriggerIds: [],
+    })
+  })
+
+  it('does not auto-select categories from broad unrelated phrases', () => {
+    const cases = [
+      ['sr', 'Nisam video taj film.'],
+      ['sr', 'Telefon mi je bio na stolu.'],
+      ['sr', 'Uskoro izlazi novi film.'],
+      ['en', 'It doesn’t matter what happened.'],
+      ['en', 'Wherever you go, I go.'],
+    ] as const
+
+    for (const [locale, message] of cases) {
+      expect(suggestCategory(locale, message)).toEqual({
+        categoryId: null,
+        confidence: 'none',
+        matchedTriggerIds: [],
+      })
+    }
+  })
+
+  it('normalizes thumbs-up skin-tone modifiers for reaction routing', () => {
+    expect(suggestCategory('sr', '👍🏻')).toEqual({
+      categoryId: 'dry_texting',
+      confidence: 'high',
+      matchedTriggerIds: ['sr_reaction_only'],
+    })
+    expect(suggestCategory('en', '👍🏽')).toEqual({
+      categoryId: 'dry_texting',
+      confidence: 'high',
+      matchedTriggerIds: ['en_reaction_only'],
     })
   })
 

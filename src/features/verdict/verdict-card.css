@@ -144,6 +144,8 @@
   max-width: 34ch;
   margin: 0;
   overflow: hidden;
+  overflow-wrap: anywhere;
+  word-break: break-word;
   font-size: 5.9cqw;
   font-weight: 700;
   line-height: 1.02;
@@ -153,14 +155,16 @@
 }
 
 .verdict-card--message-medium .verdict-card__message {
-  font-size: 4.75cqw;
+  max-width: none;
+  font-size: 4.3cqw;
   line-height: 1.04;
-  -webkit-line-clamp: 4;
+  -webkit-line-clamp: 5;
 }
 
 .verdict-card--message-long .verdict-card__message {
-  font-size: 3.7cqw;
-  line-height: 1.08;
+  max-width: none;
+  font-size: 3.2cqw;
+  line-height: 1.06;
   -webkit-line-clamp: 6;
 }
 

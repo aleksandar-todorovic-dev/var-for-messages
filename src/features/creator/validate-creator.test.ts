@@ -44,6 +44,34 @@ describe('validateCreator', () => {
     expect(hasCreatorErrors(errors)).toBe(false)
   })
 
+  it('rejects visually empty zero-width-only messages', () => {
+    const state = createInitialAppState('sr')
+    state.creator.message = '​'
+    state.creator.selectedCategoryId = 'dry_texting'
+
+    const errors = validateCreator(
+      state.creator,
+      getUiCopy('sr'),
+    )
+
+    expect(errors.message).toBe(
+      getUiCopy('sr').validation.emptyMessage,
+    )
+  })
+
+  it('validates the same trimmed message content shown by the counter', () => {
+    const state = createInitialAppState('en')
+    state.creator.message = `${' '.repeat(141)}ok`
+    state.creator.selectedCategoryId = 'dry_texting'
+
+    const errors = validateCreator(
+      state.creator,
+      getUiCopy('en'),
+    )
+
+    expect(errors.message).toBeUndefined()
+  })
+
   it('uses Unicode-aware message limits', () => {
     const state = createInitialAppState('en')
     state.creator.message = '😀'.repeat(141)

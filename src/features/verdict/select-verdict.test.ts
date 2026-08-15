@@ -155,16 +155,16 @@ describe('verdict selection', () => {
 
   it('uses a safe category fallback for unmatched manual input', () => {
     const cases = [
-      ['sr', 'time_wasting', 'sr_time_status_yellow'],
-      ['sr', 'dry_texting', 'sr_dry_short_yellow'],
+      ['sr', 'time_wasting', 'sr_time_generic_yellow'],
+      ['sr', 'dry_texting', 'sr_dry_generic_yellow'],
       ['sr', 'suspicious_excuse', 'sr_excuse_generic_yellow'],
-      ['sr', 'planning_foul', 'sr_plan_anything_red'],
+      ['sr', 'planning_foul', 'sr_plan_generic_yellow'],
       ['sr', 'emotional_offside', 'sr_offside_generic_yellow'],
       ['sr', 'missed_chance', 'sr_missed_generic_yellow'],
-      ['en', 'time_wasting', 'en_time_status_yellow'],
-      ['en', 'dry_texting', 'en_dry_short_yellow'],
+      ['en', 'time_wasting', 'en_time_generic_yellow'],
+      ['en', 'dry_texting', 'en_dry_generic_yellow'],
       ['en', 'suspicious_excuse', 'en_excuse_generic_yellow'],
-      ['en', 'planning_foul', 'en_plan_anything_red'],
+      ['en', 'planning_foul', 'en_plan_generic_yellow'],
       ['en', 'emotional_offside', 'en_offside_generic_yellow'],
       ['en', 'missed_chance', 'en_missed_generic_yellow'],
     ] as const
@@ -178,6 +178,30 @@ describe('verdict selection', () => {
         }).id,
       ).toBe(expectedId)
     }
+  })
+
+  it('does not reuse trigger-specific copy for unmatched manual choices', () => {
+    expect(
+      selectVerdictVariant({
+        locale: 'sr',
+        categoryId: 'time_wasting',
+        message: 'Kasnim 25 minuta.',
+      }).id,
+    ).toBe('sr_time_generic_yellow')
+    expect(
+      selectVerdictVariant({
+        locale: 'en',
+        categoryId: 'time_wasting',
+        message: 'I will be 30 minutes late.',
+      }).id,
+    ).toBe('en_time_generic_yellow')
+    expect(
+      selectVerdictVariant({
+        locale: 'en',
+        categoryId: 'planning_foul',
+        message: 'Friday does not work for me.',
+      }).id,
+    ).toBe('en_plan_generic_yellow')
   })
 
   it('assembles one complete generated verdict', () => {

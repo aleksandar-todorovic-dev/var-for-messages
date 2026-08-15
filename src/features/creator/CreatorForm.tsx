@@ -13,7 +13,11 @@ import type {
   CreatorState,
 } from '../../app/app-state'
 import type { IncidentCategoryId } from '../../shared/types/domain'
-import { countCharacters } from '../../shared/utils/normalize-input'
+import {
+  countCharacters,
+  normalizeMessageForDisplay,
+  normalizePlayerName,
+} from '../../shared/utils/normalize-input'
 import { CategoryPicker } from './CategoryPicker'
 import {
   MESSAGE_LIMIT,
@@ -49,10 +53,16 @@ export function CreatorForm({
   const categoryGroupRef =
     useRef<HTMLFieldSetElement>(null)
 
-  const messageLength = countCharacters(creator.message)
-  const hasMessage = Boolean(creator.message.trim())
-  const playerNameLength = countCharacters(
+  const normalizedMessage = normalizeMessageForDisplay(
+    creator.message,
+  )
+  const normalizedPlayerName = normalizePlayerName(
     creator.playerName,
+  )
+  const messageLength = countCharacters(normalizedMessage)
+  const hasMessage = Boolean(normalizedMessage)
+  const playerNameLength = countCharacters(
+    normalizedPlayerName,
   )
 
   function focusFirstError(errors: CreatorFieldErrors) {
@@ -62,13 +72,13 @@ export function CreatorForm({
         return
       }
 
-      if (errors.playerName) {
-        playerNameRef.current?.focus()
+      if (errors.category) {
+        categoryGroupRef.current?.focus()
         return
       }
 
-      if (errors.category) {
-        categoryGroupRef.current?.focus()
+      if (errors.playerName) {
+        playerNameRef.current?.focus()
       }
     })
   }
@@ -86,7 +96,7 @@ export function CreatorForm({
       event.key !== 'Enter' ||
       event.shiftKey ||
       event.nativeEvent.isComposing ||
-      !creator.message.trim()
+      !normalizedMessage
     ) {
       return
     }

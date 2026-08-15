@@ -1,5 +1,12 @@
-import { describe, expect, it } from 'vitest'
-import { createVerdictFileName } from './create-verdict-image'
+import { afterEach, describe, expect, it, vi } from 'vitest'
+import {
+  createVerdictFileName,
+  downloadVerdictFile,
+} from './create-verdict-image'
+
+afterEach(() => {
+  vi.unstubAllGlobals()
+})
 
 describe('createVerdictFileName', () => {
   it('creates a neutral ASCII filename from the case ID', () => {
@@ -18,5 +25,39 @@ describe('createVerdictFileName', () => {
     expect(createVerdictFileName('###')).toBe(
       'var-verdict-case.png',
     )
+  })
+
+  it('cleans up temporary download resources when clicking fails', () => {
+    const remove = vi.fn()
+    const revokeObjectURL = vi.fn()
+    const link = {
+      href: '',
+      download: '',
+      click: vi.fn(() => {
+        throw new Error('download blocked')
+      }),
+      remove,
+    }
+
+    vi.stubGlobal('URL', {
+      createObjectURL: vi.fn(() => 'blob:test'),
+      revokeObjectURL,
+    })
+    vi.stubGlobal('document', {
+      createElement: vi.fn(() => link),
+      body: { append: vi.fn() },
+    })
+    vi.stubGlobal('window', {
+      setTimeout(callback: () => void) {
+        callback()
+        return 1
+      },
+    })
+
+    expect(() =>
+      downloadVerdictFile({ name: 'test.png' } as File),
+    ).toThrow('download blocked')
+    expect(remove).toHaveBeenCalledOnce()
+    expect(revokeObjectURL).toHaveBeenCalledWith('blob:test')
   })
 })

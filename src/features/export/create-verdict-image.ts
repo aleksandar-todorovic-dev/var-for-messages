@@ -117,10 +117,14 @@ export function downloadVerdictFile(file: File) {
   link.href = objectUrl
   link.download = file.name
   document.body.append(link)
-  link.click()
-  link.remove()
 
-  window.setTimeout(() => {
-    URL.revokeObjectURL(objectUrl)
-  }, 0)
+  try {
+    link.click()
+  } finally {
+    link.remove()
+
+    window.setTimeout(() => {
+      URL.revokeObjectURL(objectUrl)
+    }, 0)
+  }
 }

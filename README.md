@@ -20,7 +20,7 @@ The app currently supports:
 - deterministic category suggestions;
 - manual category override;
 - 6 incident categories;
-- 46 curated SR/EN verdict bundles;
+- 52 curated SR/EN verdict bundles;
 - a short `scan → lock → reveal` review sequence;
 - red and yellow verdict cards;
 - exact `1080 × 1350` PNG export;

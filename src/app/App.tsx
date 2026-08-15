@@ -68,12 +68,19 @@ function App() {
   }, [creator.locale])
 
   useEffect(() => {
+    if (
+      view === 'create' &&
+      creatorEntryFocus === 'message'
+    ) {
+      return
+    }
+
     window.scrollTo({
       top: 0,
       left: 0,
       behavior: 'auto',
     })
-  }, [view])
+  }, [view, creatorEntryFocus])
 
   useEffect(() => {
     if (view !== 'create') {
@@ -168,35 +175,45 @@ function App() {
   }
 
   function handleSubmit(): CreatorFieldErrors {
-    let categoryId = creator.selectedCategoryId
-    let creatorForValidation = creator
+    const manualSelection =
+      creator.categorySelectionSource === 'manual'
+    let categoryId = manualSelection
+      ? creator.selectedCategoryId
+      : null
+    let creatorForValidation = {
+      ...creator,
+      selectedCategoryId: categoryId,
+    }
 
-    if (!categoryId && creator.message.trim()) {
+    if (!manualSelection && creator.message.trim()) {
       const immediateSuggestion = suggestCategory(
         creator.locale,
         creator.message,
       )
 
+      categoryId =
+        immediateSuggestion.confidence === 'high'
+          ? immediateSuggestion.categoryId
+          : null
+      creatorForValidation = {
+        ...creator,
+        selectedCategoryId: categoryId,
+      }
+
+      dispatch({
+        type: 'APPLY_CATEGORY_SUGGESTION',
+        categoryId: immediateSuggestion.categoryId,
+        confidence: immediateSuggestion.confidence,
+      })
+
       if (
         immediateSuggestion.categoryId &&
-        immediateSuggestion.confidence === 'high'
+        immediateSuggestion.confidence !== 'none'
       ) {
-        categoryId = immediateSuggestion.categoryId
-        creatorForValidation = {
-          ...creator,
-          selectedCategoryId: categoryId,
-        }
-
-        dispatch({
-          type: 'APPLY_CATEGORY_SUGGESTION',
-          categoryId,
-          confidence: 'high',
-        })
-
         const eventKey = [
           creator.locale,
-          categoryId,
-          'high',
+          immediateSuggestion.categoryId,
+          immediateSuggestion.confidence,
         ].join(':')
 
         if (eventKey !== lastSuggestionEventRef.current) {
@@ -204,8 +221,8 @@ function App() {
 
           track('category_suggested', {
             locale: creator.locale,
-            categoryId,
-            confidence: 'high',
+            categoryId: immediateSuggestion.categoryId,
+            confidence: immediateSuggestion.confidence,
           })
         }
       }
