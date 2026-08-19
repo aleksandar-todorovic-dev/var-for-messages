@@ -8,13 +8,12 @@ import {
   getUiCopy,
 } from '../../content'
 import type { GeneratedVerdict } from '../../shared/types/domain'
-import { track } from '../analytics/analytics'
 import {
   downloadVerdictFile,
 } from '../export/create-verdict-image'
 import { ExportStage } from '../export/ExportStage'
+import { LegalFooter } from '../legal/LegalFooter'
 import {
-  getShareCapability,
   shareVerdictFile,
 } from '../export/share-verdict'
 import { useVerdictImage } from '../export/useVerdictImage'
@@ -27,6 +26,9 @@ import './verdict-view.css'
 type VerdictViewProps = {
   verdict: GeneratedVerdict
   onEdit: () => void
+  onShareCompleted: () => void
+  onShareFailed: () => void
+  onDownloadClicked: () => void
   onReviewAnother: () => void
 }
 
@@ -35,6 +37,9 @@ type ActiveAction = 'share' | 'download' | null
 export function VerdictView({
   verdict,
   onEdit,
+  onShareCompleted,
+  onShareFailed,
+  onDownloadClicked,
   onReviewAnother,
 }: VerdictViewProps) {
   const headingRef = useRef<HTMLHeadingElement>(null)
@@ -95,16 +100,6 @@ export function VerdictView({
 
     try {
       const image = imageResult ?? (await prepare())
-      const capability = getShareCapability(
-        window.navigator,
-        image.file,
-      )
-
-      track('share_invoked', {
-        locale: verdict.locale,
-        categoryId: verdict.categoryId,
-        capability,
-      })
 
       const result = await shareVerdictFile({
         navigatorLike: window.navigator,
@@ -118,12 +113,7 @@ export function VerdictView({
         setActionMessage(
           copy.actionStatus.fallbackDownloaded,
         )
-
-        track('download_clicked', {
-          locale: verdict.locale,
-          categoryId: verdict.categoryId,
-          source: 'share_fallback',
-        })
+        onDownloadClicked()
 
         return
       }
@@ -134,22 +124,10 @@ export function VerdictView({
       }
 
       setActionMessage(copy.actionStatus.shared)
-
-      track('share_completed', {
-        locale: verdict.locale,
-        categoryId: verdict.categoryId,
-      })
-    } catch (error) {
+      onShareCompleted()
+    } catch {
       setActionError(copy.errors.share)
-
-      track('share_failed', {
-        locale: verdict.locale,
-        categoryId: verdict.categoryId,
-        failureClass:
-          error instanceof Error
-            ? error.name
-            : 'UnknownError',
-      })
+      onShareFailed()
     } finally {
       setActiveAction(null)
     }
@@ -164,12 +142,7 @@ export function VerdictView({
 
       downloadVerdictFile(image.file)
       setActionMessage(copy.actionStatus.downloaded)
-
-      track('download_clicked', {
-        locale: verdict.locale,
-        categoryId: verdict.categoryId,
-        source: 'download_button',
-      })
+      onDownloadClicked()
     } catch {
       setActionError(copy.errors.export)
     } finally {
@@ -311,6 +284,8 @@ export function VerdictView({
         ref={exportNodeRef}
         verdict={cardContent}
       />
+
+      <LegalFooter locale={verdict.locale} />
     </main>
   )
 }
