@@ -1,0 +1,219 @@
+.legal-footer {
+  width: min(100% - 2rem, 78rem);
+  margin-inline: auto;
+  padding-block: 2rem 2.5rem;
+  color: #a9aaa4;
+  border-top: 1px solid rgb(244 241 232 / 0.14);
+  font-size: 0.72rem;
+  line-height: 1.55;
+}
+
+.creator-page > .legal-footer {
+  width: 100%;
+  margin-top: clamp(3rem, 7vw, 6rem);
+  padding-bottom: 0;
+}
+
+.legal-footer__affiliation {
+  max-width: 68rem;
+  margin: 0;
+}
+
+.legal-footer nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem 1.25rem;
+  margin-top: 1rem;
+}
+
+.legal-footer nav a,
+.legal-footer nav button {
+  min-height: 2rem;
+  padding: 0;
+  color: #d0d0ca;
+  background: transparent;
+  border: 0;
+  font: inherit;
+  font-weight: 700;
+  line-height: 2rem;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.2em;
+}
+
+.legal-footer nav a:hover,
+.legal-footer nav button:hover {
+  color: #f4f1e8;
+}
+
+.legal-footer nav a:focus-visible,
+.legal-footer nav button:focus-visible,
+.legal-dialog a:focus-visible,
+.legal-dialog button:focus-visible {
+  outline: 3px solid #78a9ff;
+  outline-offset: 3px;
+}
+
+.legal-dialog {
+  width: min(100% - 2rem, 48rem);
+  max-height: min(88vh, 54rem);
+  margin: auto;
+  padding: 0;
+  color: #11110f;
+  background: #f1eadb;
+  border: 1px solid rgb(241 234 219 / 0.7);
+  border-radius: 0;
+}
+
+.legal-dialog::backdrop {
+  background: rgb(5 5 4 / 0.78);
+}
+
+.legal-dialog__document {
+  padding: clamp(1.25rem, 4vw, 2.75rem);
+}
+
+.legal-dialog__header {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: 1.5rem;
+  padding-bottom: 1.25rem;
+  border-bottom: 1px solid rgb(17 17 15 / 0.22);
+}
+
+.legal-dialog__header h2 {
+  margin: 0;
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: clamp(2.1rem, 7vw, 3.5rem);
+  font-weight: 900;
+  line-height: 0.95;
+  letter-spacing: -0.025em;
+  text-transform: uppercase;
+}
+
+.legal-dialog__header p {
+  margin: 0.6rem 0 0;
+  color: rgb(17 17 15 / 0.6);
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+.legal-dialog__header button {
+  flex: 0 0 auto;
+  min-height: 2.5rem;
+  padding: 0.45rem 0.7rem;
+  color: #11110f;
+  background: transparent;
+  border: 1px solid rgb(17 17 15 / 0.35);
+  font-size: 0.72rem;
+  font-weight: 800;
+}
+
+.legal-dialog__intro {
+  margin: 1.5rem 0;
+  font-size: 1rem;
+  font-weight: 700;
+  line-height: 1.55;
+}
+
+.legal-dialog__controller {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1px;
+  margin: 0 0 2rem;
+  background: rgb(17 17 15 / 0.2);
+  border: 1px solid rgb(17 17 15 / 0.2);
+}
+
+.legal-dialog__controller > div {
+  min-width: 0;
+  padding: 0.85rem;
+  background: #e8e1d3;
+}
+
+.legal-dialog__controller dt {
+  color: rgb(17 17 15 / 0.58);
+  font-size: 0.65rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.legal-dialog__controller dd {
+  margin: 0.35rem 0 0;
+  overflow-wrap: anywhere;
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.legal-dialog a {
+  color: #234b86;
+}
+
+.legal-dialog__sections {
+  display: grid;
+  gap: 1.75rem;
+}
+
+.legal-dialog__sections section {
+  padding-top: 1.5rem;
+  border-top: 1px solid rgb(17 17 15 / 0.16);
+}
+
+.legal-dialog__sections h3 {
+  margin: 0 0 0.75rem;
+  font-size: 0.88rem;
+  letter-spacing: 0.055em;
+  text-transform: uppercase;
+}
+
+.legal-dialog__sections p,
+.legal-dialog__sections li,
+.legal-dialog__authority-link {
+  font-size: 0.82rem;
+  line-height: 1.65;
+}
+
+.legal-dialog__sections p {
+  margin: 0.65rem 0 0;
+}
+
+.legal-dialog__sections ul {
+  margin: 0.75rem 0 0;
+  padding-left: 1.25rem;
+}
+
+.legal-dialog__sections li + li {
+  margin-top: 0.35rem;
+}
+
+.legal-dialog__authority-link {
+  margin: 2rem 0 0;
+  padding-top: 1.25rem;
+  border-top: 1px solid rgb(17 17 15 / 0.16);
+  font-weight: 700;
+}
+
+@media (max-width: 620px) {
+  .legal-footer {
+    width: min(100% - 1.25rem, 78rem);
+  }
+
+  .creator-page > .legal-footer {
+    width: 100%;
+  }
+
+  .legal-dialog {
+    width: min(100% - 1rem, 48rem);
+    max-height: calc(100vh - 1rem);
+  }
+
+  .legal-dialog__header {
+    gap: 0.75rem;
+  }
+
+  .legal-dialog__controller {
+    grid-template-columns: 1fr;
+  }
+}

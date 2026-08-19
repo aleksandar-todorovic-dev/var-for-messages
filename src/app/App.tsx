@@ -4,7 +4,9 @@ import {
   useRef,
 } from 'react'
 import { getUiCopy } from '../content'
-import { track } from '../features/analytics/analytics'
+import { trackLandingViewed } from '../features/analytics/analytics'
+import type { RecruitmentSource } from '../features/analytics/analytics-events'
+import { createVerdictKpiTracker } from '../features/analytics/verdict-kpi'
 import { suggestCategory } from '../features/category-suggestion/suggest-category'
 import { CreatorView } from '../features/creator/CreatorView'
 import {
@@ -29,9 +31,11 @@ import {
 } from './app-state'
 import './app.css'
 
-const APP_VERSION = '0.1.0'
+type AppProps = {
+  recruitmentSource?: RecruitmentSource
+}
 
-function App() {
+function App({ recruitmentSource }: AppProps) {
   const [state, dispatch] = useReducer(
     appReducer,
     undefined,
@@ -46,8 +50,15 @@ function App() {
     session,
   } = state
   const copy = getUiCopy(creator.locale)
-  const landingTrackedRef = useRef(false)
-  const lastSuggestionEventRef = useRef('')
+  const verdictKpisRef = useRef<
+    ReturnType<typeof createVerdictKpiTracker> | null
+  >(null)
+
+  if (verdictKpisRef.current === null) {
+    verdictKpisRef.current = createVerdictKpiTracker()
+  }
+
+  const verdictKpis = verdictKpisRef.current
 
   useEffect(() => {
     document.documentElement.lang =
@@ -55,17 +66,13 @@ function App() {
   }, [creator.locale])
 
   useEffect(() => {
-    if (landingTrackedRef.current) {
-      return
-    }
-
-    landingTrackedRef.current = true
-
-    track('landing_viewed', {
+    trackLandingViewed({
       locale: creator.locale,
-      appVersion: APP_VERSION,
+      ...(recruitmentSource
+        ? { source: recruitmentSource }
+        : {}),
     })
-  }, [creator.locale])
+  }, [creator.locale, recruitmentSource])
 
   useEffect(() => {
     if (
@@ -90,8 +97,6 @@ function App() {
     const message = creator.message.trim()
 
     if (!message) {
-      lastSuggestionEventRef.current = ''
-
       dispatch({
         type: 'APPLY_CATEGORY_SUGGESTION',
         categoryId: null,
@@ -111,29 +116,6 @@ function App() {
         categoryId: suggestion.categoryId,
         confidence: suggestion.confidence,
       })
-
-      if (
-        suggestion.categoryId &&
-        suggestion.confidence !== 'none'
-      ) {
-        const eventKey = [
-          creator.locale,
-          suggestion.categoryId,
-          suggestion.confidence,
-        ].join(':')
-
-        if (
-          eventKey !== lastSuggestionEventRef.current
-        ) {
-          lastSuggestionEventRef.current = eventKey
-
-          track('category_suggested', {
-            locale: creator.locale,
-            categoryId: suggestion.categoryId,
-            confidence: suggestion.confidence,
-          })
-        }
-      }
     }, 250)
 
     return () => window.clearTimeout(timeoutId)
@@ -146,37 +128,22 @@ function App() {
       return
     }
 
-    track('language_changed', {
-      from: creator.locale,
-      to: locale,
-      view,
-    })
-
-    lastSuggestionEventRef.current = ''
     dispatch({ type: 'SET_LOCALE', locale })
   }
 
   function handleCategoryChange(
     categoryId: IncidentCategoryId,
   ) {
-    if (
-      creator.suggestedCategoryId &&
-      creator.suggestedCategoryId !== categoryId
-    ) {
-      track('category_overridden', {
-        locale: creator.locale,
-        suggestedCategoryId:
-          creator.suggestedCategoryId,
-        selectedCategoryId: categoryId,
-      })
-    }
-
     dispatch({ type: 'SELECT_CATEGORY', categoryId })
   }
 
   function handleSubmit(): CreatorFieldErrors {
     const manualSelection =
       creator.categorySelectionSource === 'manual'
+    const currentSuggestion = suggestCategory(
+      creator.locale,
+      creator.message,
+    )
     let categoryId = manualSelection
       ? creator.selectedCategoryId
       : null
@@ -186,14 +153,9 @@ function App() {
     }
 
     if (!manualSelection && creator.message.trim()) {
-      const immediateSuggestion = suggestCategory(
-        creator.locale,
-        creator.message,
-      )
-
       categoryId =
-        immediateSuggestion.confidence === 'high'
-          ? immediateSuggestion.categoryId
+        currentSuggestion.confidence === 'high'
+          ? currentSuggestion.categoryId
           : null
       creatorForValidation = {
         ...creator,
@@ -202,30 +164,9 @@ function App() {
 
       dispatch({
         type: 'APPLY_CATEGORY_SUGGESTION',
-        categoryId: immediateSuggestion.categoryId,
-        confidence: immediateSuggestion.confidence,
+        categoryId: currentSuggestion.categoryId,
+        confidence: currentSuggestion.confidence,
       })
-
-      if (
-        immediateSuggestion.categoryId &&
-        immediateSuggestion.confidence !== 'none'
-      ) {
-        const eventKey = [
-          creator.locale,
-          immediateSuggestion.categoryId,
-          immediateSuggestion.confidence,
-        ].join(':')
-
-        if (eventKey !== lastSuggestionEventRef.current) {
-          lastSuggestionEventRef.current = eventKey
-
-          track('category_suggested', {
-            locale: creator.locale,
-            categoryId: immediateSuggestion.categoryId,
-            confidence: immediateSuggestion.confidence,
-          })
-        }
-      }
     }
 
     const errors = validateCreator(
@@ -253,11 +194,20 @@ function App() {
         caseOccurrence: session.generatedCount + 1,
       })
 
-      track('verdict_generated', {
+      if (!verdictKpis.startLifecycle()) {
+        return {}
+      }
+
+      verdictKpis.emitOnce('verdict_generated', {
         locale: verdict.locale,
-        categoryId: verdict.categoryId,
-        severity: verdict.severity,
-        generatedCount: session.generatedCount + 1,
+        category: verdict.categoryId,
+      })
+
+      verdictKpis.emitCategorySuggestionOutcome({
+        locale: verdict.locale,
+        suggestedCategory: currentSuggestion.categoryId,
+        suggestionConfidence: currentSuggestion.confidence,
+        selectedCategory: verdict.categoryId,
       })
 
       dispatch({
@@ -296,21 +246,43 @@ function App() {
       <VerdictView
         verdict={generatedVerdict}
         onEdit={() => {
-          track('edit_clicked', {
-            locale: generatedVerdict.locale,
-            categoryId: generatedVerdict.categoryId,
-          })
-
+          verdictKpis.finishLifecycle()
           dispatch({ type: 'EDIT_INCIDENT' })
         }}
-        onReviewAnother={() => {
-          track('review_another_clicked', {
+        onShareCompleted={() =>
+          verdictKpis.emitOnce(
+            'share_completed',
+            {
+              locale: generatedVerdict.locale,
+              category: generatedVerdict.categoryId,
+            },
+          )
+        }
+        onShareFailed={() =>
+          verdictKpis.emitOnce('share_failed', {
             locale: generatedVerdict.locale,
-            previousCategoryId:
-              generatedVerdict.categoryId,
-            generatedCount: session.generatedCount,
+            category: generatedVerdict.categoryId,
           })
+        }
+        onDownloadClicked={() =>
+          verdictKpis.emitOnce(
+            'download_clicked',
+            {
+              locale: generatedVerdict.locale,
+              category: generatedVerdict.categoryId,
+            },
+          )
+        }
+        onReviewAnother={() => {
+          verdictKpis.emitOnce(
+            'review_another_clicked',
+            {
+              locale: generatedVerdict.locale,
+              category: generatedVerdict.categoryId,
+            },
+          )
 
+          verdictKpis.finishLifecycle()
           dispatch({ type: 'REVIEW_ANOTHER' })
         }}
       />

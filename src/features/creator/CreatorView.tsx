@@ -14,6 +14,7 @@ import type {
   Locale,
 } from '../../shared/types/domain'
 import { useReducedMotion } from '../../shared/hooks/useReducedMotion'
+import { LegalFooter } from '../legal/LegalFooter'
 import { VerdictCard } from '../verdict/VerdictCard'
 import { CreatorForm } from './CreatorForm'
 import { LanguageSwitch } from './LanguageSwitch'
@@ -214,6 +215,8 @@ export function CreatorView({
           onSubmit={onSubmit}
         />
       </section>
+
+      <LegalFooter locale={creator.locale} />
     </main>
   )
 }

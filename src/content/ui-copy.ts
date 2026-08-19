@@ -93,7 +93,7 @@ export const enUiCopy = {
   playerNameLabel: 'Player name — optional',
 
   privacyNote:
-    'Your message and player name stay in your browser. Do not enter sensitive or private information, and only use content you are allowed to use and share.',
+    'Your message and player name stay in your browser. Don’t enter sensitive or private information, and only use content you’re allowed to use and share.',
 
   reviewButton: 'Review incident',
 
