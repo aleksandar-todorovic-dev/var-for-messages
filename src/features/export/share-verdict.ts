@@ -42,6 +42,63 @@ function isShareCancellation(error: unknown) {
   )
 }
 
+async function waitForVisibleFrame() {
+  if (
+    typeof document === 'undefined' ||
+    typeof window === 'undefined' ||
+    typeof window.requestAnimationFrame !== 'function'
+  ) {
+    return
+  }
+
+  await new Promise<void>((resolve) => {
+    let finished = false
+    let frameScheduled = false
+
+    const finish = () => {
+      if (finished) {
+        return
+      }
+
+      finished = true
+      document.removeEventListener(
+        'visibilitychange',
+        handleVisibilityChange,
+      )
+      resolve()
+    }
+
+    const handleVisibilityChange = () => {
+      if (
+        document.visibilityState !== 'visible' ||
+        frameScheduled
+      ) {
+        return
+      }
+
+      frameScheduled = true
+
+      try {
+        window.requestAnimationFrame(() => {
+          frameScheduled = false
+
+          if (document.visibilityState === 'visible') {
+            finish()
+          }
+        })
+      } catch {
+        finish()
+      }
+    }
+
+    document.addEventListener(
+      'visibilitychange',
+      handleVisibilityChange,
+    )
+    handleVisibilityChange()
+  })
+}
+
 export async function shareVerdictFile({
   navigatorLike,
   file,
@@ -74,6 +131,11 @@ export async function shareVerdictFile({
       title,
       text,
     })
+
+    // Android can hand the payload to a native target while Chrome is
+    // entering a hidden/frozen state. Complete the product flow only
+    // after the page can reliably render UI and dispatch analytics.
+    await waitForVisibleFrame()
 
     return {
       status: 'shared',
