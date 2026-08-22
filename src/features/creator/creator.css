@@ -73,6 +73,7 @@
 .creator-form input:focus-visible,
 .creator-form textarea:focus-visible,
 .creator-form__submit:focus-visible,
+.message-examples__toggle:focus-visible,
 .category-suggestion__toggle:focus-visible,
 .category-picker:focus-visible {
   outline: 3px solid var(--review-accent);
@@ -275,6 +276,70 @@
   font-weight: 750;
 }
 
+.message-examples {
+  display: grid;
+  justify-items: start;
+  gap: 0.55rem;
+}
+
+.message-examples__toggle {
+  min-height: 2.5rem;
+  padding: 0.35rem 0;
+  color: rgb(17 17 15 / 0.62);
+  background: transparent;
+  border: 0;
+  font-size: 0.76rem;
+  font-weight: 750;
+  line-height: 1.35;
+  text-align: left;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.2em;
+}
+
+.message-examples__toggle:hover {
+  color: var(--ink);
+}
+
+.message-examples__content {
+  display: grid;
+  gap: 0.55rem;
+  width: 100%;
+  padding-top: 0.7rem;
+  border-top: 1px solid rgb(17 17 15 / 0.18);
+}
+
+.message-examples__content[hidden] {
+  display: none;
+}
+
+.message-examples__list {
+  display: grid;
+  gap: 0.25rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.message-examples__list li {
+  color: rgb(17 17 15 / 0.78);
+  font-size: 0.82rem;
+  line-height: 1.4;
+}
+
+.message-examples__list li::before {
+  margin-right: 0.45rem;
+  color: rgb(17 17 15 / 0.42);
+  content: "—";
+}
+
+.message-examples__note {
+  margin: 0;
+  color: rgb(17 17 15 / 0.5);
+  font-size: 0.7rem;
+  line-height: 1.4;
+}
+
 .category-picker {
   min-width: 0;
   margin: 0;
@@ -301,6 +366,14 @@
   clip: rect(0 0 0 0);
   white-space: nowrap;
   border: 0;
+}
+
+.category-picker__guidance {
+  max-width: 38rem;
+  margin: 0 0 0.9rem;
+  color: rgb(17 17 15 / 0.64);
+  font-size: 0.82rem;
+  line-height: 1.45;
 }
 
 .category-suggestion {

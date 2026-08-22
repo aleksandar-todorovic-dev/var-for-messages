@@ -62,6 +62,11 @@ export function appReducer(
             ? state.creator.selectedCategoryId
             : null,
           suggestionConfidence: 'none',
+          categorySuggestionPending:
+            !manualSelection &&
+            Boolean(
+              normalizeMessageForDisplay(state.creator.message),
+            ),
           categorySelectionSource: manualSelection
             ? 'manual'
             : null,
@@ -94,6 +99,8 @@ export function appReducer(
             ? state.creator.selectedCategoryId
             : null,
           suggestionConfidence: 'none',
+          categorySuggestionPending:
+            !messageCleared && !keepManualSelection,
           categorySelectionSource: keepManualSelection
             ? 'manual'
             : null,
@@ -149,6 +156,7 @@ export function appReducer(
           ...state.creator,
           suggestedCategoryId: action.categoryId,
           suggestionConfidence: action.confidence,
+          categorySuggestionPending: false,
           selectedCategoryId: manualSelection
             ? state.creator.selectedCategoryId
             : shouldAutoSelect
@@ -180,6 +188,7 @@ export function appReducer(
         creator: {
           ...state.creator,
           selectedCategoryId: action.categoryId,
+          categorySuggestionPending: false,
           categorySelectionSource: 'manual',
           errors: {
             ...state.creator.errors,
@@ -268,6 +277,7 @@ export function appReducer(
           suggestedCategoryId: null,
           selectedCategoryId: null,
           suggestionConfidence: 'none',
+          categorySuggestionPending: false,
           categorySelectionSource: null,
           errors: {},
         },

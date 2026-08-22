@@ -29,6 +29,20 @@ export type VerdictVariant = {
   caseCode: string
 }
 
+export type MessageExampleSet = readonly [
+  string,
+  string,
+  string,
+  string,
+  string,
+]
+
+export type MessageExampleSets = readonly [
+  MessageExampleSet,
+  MessageExampleSet,
+  MessageExampleSet,
+]
+
 export type UiCopy = {
   languageLabel: string
   creatorKicker: string
@@ -42,6 +56,11 @@ export type UiCopy = {
 
   messageLabel: string
   messagePlaceholder: string
+  messageExamples: {
+    control: string
+    sets: MessageExampleSets
+    note: string
+  }
   playerNameLabel: string
 
   privacyNote: string
@@ -52,6 +71,8 @@ export type UiCopy = {
   changeIncident: string
   hideIncidents: string
   categoryPrompt: string
+  lowSuggestionGuidance: string
+  noClearSuggestionGuidance: string
 
   reviewingStatuses: readonly [string, string, string]
 

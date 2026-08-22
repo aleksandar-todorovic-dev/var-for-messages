@@ -17,6 +17,7 @@ import { useReducedMotion } from '../../shared/hooks/useReducedMotion'
 import { LegalFooter } from '../legal/LegalFooter'
 import { VerdictCard } from '../verdict/VerdictCard'
 import { CreatorForm } from './CreatorForm'
+import type { InspirationSetIndex } from './inspiration-sets'
 import { LanguageSwitch } from './LanguageSwitch'
 import './creator.css'
 import './creator-qa.css'
@@ -24,6 +25,7 @@ import './creator-qa.css'
 type CreatorViewProps = {
   creator: CreatorState
   entryFocus: CreatorEntryFocus
+  inspirationSetIndex: InspirationSetIndex
   onLocaleChange: (locale: Locale) => void
   onMessageChange: (message: string) => void
   onPlayerNameChange: (playerName: string) => void
@@ -47,6 +49,7 @@ const demoByLocale = {
 export function CreatorView({
   creator,
   entryFocus,
+  inspirationSetIndex,
   onLocaleChange,
   onMessageChange,
   onPlayerNameChange,
@@ -209,6 +212,7 @@ export function CreatorView({
           copy={copy}
           messageInputRef={messageInputRef}
           focusMessageOnMount={entryFocus === 'message'}
+          inspirationSetIndex={inspirationSetIndex}
           onMessageChange={onMessageChange}
           onPlayerNameChange={onPlayerNameChange}
           onCategoryChange={onCategoryChange}

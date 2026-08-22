@@ -1,5 +1,7 @@
 import {
+  useId,
   useRef,
+  useState,
   type FormEvent,
   type KeyboardEvent,
   type RefObject,
@@ -19,6 +21,8 @@ import {
   normalizePlayerName,
 } from '../../shared/utils/normalize-input'
 import { CategoryPicker } from './CategoryPicker'
+import type { InspirationSetIndex } from './inspiration-sets'
+import { MessageExamplesDisclosure } from './MessageExamplesDisclosure'
 import {
   MESSAGE_LIMIT,
   PLAYER_NAME_LIMIT,
@@ -30,6 +34,7 @@ type CreatorFormProps = {
   copy: UiCopy
   messageInputRef: RefObject<HTMLTextAreaElement | null>
   focusMessageOnMount: boolean
+  inspirationSetIndex: InspirationSetIndex
   onMessageChange: (message: string) => void
   onPlayerNameChange: (playerName: string) => void
   onCategoryChange: (
@@ -44,11 +49,15 @@ export function CreatorForm({
   copy,
   messageInputRef,
   focusMessageOnMount,
+  inspirationSetIndex,
   onMessageChange,
   onPlayerNameChange,
   onCategoryChange,
   onSubmit,
 }: CreatorFormProps) {
+  const examplesContentId = useId()
+  const [examplesExpanded, setExamplesExpanded] =
+    useState(false)
   const playerNameRef = useRef<HTMLInputElement>(null)
   const categoryGroupRef =
     useRef<HTMLFieldSetElement>(null)
@@ -61,6 +70,10 @@ export function CreatorForm({
   )
   const messageLength = countCharacters(normalizedMessage)
   const hasMessage = Boolean(normalizedMessage)
+  const showCategoryPicker =
+    hasMessage &&
+    (!creator.categorySuggestionPending ||
+      creator.categorySelectionSource === 'manual')
   const playerNameLength = countCharacters(
     normalizedPlayerName,
   )
@@ -175,9 +188,19 @@ export function CreatorForm({
             {creator.errors.message}
           </p>
         ) : null}
+
+        <MessageExamplesDisclosure
+          copy={copy.messageExamples}
+          contentId={examplesContentId}
+          expanded={examplesExpanded}
+          inspirationSetIndex={inspirationSetIndex}
+          onToggle={() =>
+            setExamplesExpanded((expanded) => !expanded)
+          }
+        />
       </div>
 
-      {hasMessage ? (
+      {showCategoryPicker ? (
         <CategoryPicker
           categories={categories}
           copy={copy}

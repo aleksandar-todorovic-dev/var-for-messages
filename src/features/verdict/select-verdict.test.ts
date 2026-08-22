@@ -180,6 +180,85 @@ describe('verdict selection', () => {
     }
   })
 
+  it.each([
+    ['sr', 'dry_texting', 'Aha.', 'sr_dry_generic_yellow'],
+    [
+      'sr',
+      'suspicious_excuse',
+      'Sad vidim.',
+      'sr_excuse_generic_yellow',
+    ],
+    [
+      'sr',
+      'planning_foul',
+      'Kako hoćeš.',
+      'sr_plan_generic_yellow',
+    ],
+    [
+      'sr',
+      'emotional_offside',
+      'Jesmo mi zajedno?',
+      'sr_offside_generic_yellow',
+    ],
+    [
+      'en',
+      'suspicious_excuse',
+      'Just seeing this.',
+      'en_excuse_generic_yellow',
+    ],
+    [
+      'en',
+      'planning_foul',
+      'Whatever you want.',
+      'en_plan_generic_yellow',
+    ],
+    [
+      'en',
+      'emotional_offside',
+      'Are we together?',
+      'en_offside_generic_yellow',
+    ],
+  ] as const)(
+    'uses the %s/%s safe fallback for category-only cue "%s"',
+    (locale, categoryId, message, expectedId) => {
+      expect(
+        selectVerdictVariant({
+          locale,
+          categoryId,
+          message,
+        }).id,
+      ).toBe(expectedId)
+    },
+  )
+
+  it('uses the safe fallback after a weak suggestion is confirmed', () => {
+    const verdict = generateVerdict({
+      locale: 'sr',
+      categoryId: 'suspicious_excuse',
+      message: 'Sad vidim.',
+    })
+
+    expect(verdict.variantId).toBe('sr_excuse_generic_yellow')
+    expect(verdict.categoryId).toBe('suspicious_excuse')
+  })
+
+  it('keeps stronger compatible triggers eligible for specific verdicts', () => {
+    expect(
+      selectVerdictVariant({
+        locale: 'sr',
+        categoryId: 'suspicious_excuse',
+        message: 'Tek sad vidim poruku.',
+      }).id,
+    ).toBe('sr_excuse_just_saw_yellow')
+    expect(
+      selectVerdictVariant({
+        locale: 'en',
+        categoryId: 'suspicious_excuse',
+        message: 'Sorry, just saw this.',
+      }).id,
+    ).toBe('en_excuse_just_saw_yellow')
+  })
+
   it('does not reuse trigger-specific copy for unmatched manual choices', () => {
     expect(
       selectVerdictVariant({
