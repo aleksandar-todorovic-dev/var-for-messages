@@ -39,6 +39,11 @@ describe('appReducer application flow', () => {
       confidence: 'high',
     })
 
+    expect(state.creator.suggestedCategoryId).toBe(
+      'time_wasting',
+    )
+    expect(state.creator.suggestionConfidence).toBe('high')
+    expect(state.creator.categorySuggestionPending).toBe(false)
     expect(state.creator.selectedCategoryId).toBe('time_wasting')
     expect(state.creator.categorySelectionSource).toBe('suggestion')
   })
@@ -53,7 +58,24 @@ describe('appReducer application flow', () => {
     expect(state.creator.suggestedCategoryId).toBe(
       'emotional_offside',
     )
+    expect(state.creator.suggestionConfidence).toBe('low')
+    expect(state.creator.categorySuggestionPending).toBe(false)
     expect(state.creator.selectedCategoryId).toBeNull()
+    expect(state.creator.categorySelectionSource).toBeNull()
+  })
+
+  it('keeps a no-match suggestion state unselected', () => {
+    const state = appReducer(createInitialAppState('en'), {
+      type: 'APPLY_CATEGORY_SUGGESTION',
+      categoryId: null,
+      confidence: 'none',
+    })
+
+    expect(state.creator.suggestedCategoryId).toBeNull()
+    expect(state.creator.suggestionConfidence).toBe('none')
+    expect(state.creator.categorySuggestionPending).toBe(false)
+    expect(state.creator.selectedCategoryId).toBeNull()
+    expect(state.creator.categorySelectionSource).toBeNull()
   })
 
   it('preserves a manual override when suggestions change', () => {
@@ -93,6 +115,7 @@ describe('appReducer application flow', () => {
 
     expect(state.creator.selectedCategoryId).toBeNull()
     expect(state.creator.suggestedCategoryId).toBeNull()
+    expect(state.creator.categorySuggestionPending).toBe(true)
     expect(state.creator.categorySelectionSource).toBeNull()
   })
 
@@ -108,6 +131,7 @@ describe('appReducer application flow', () => {
     })
 
     expect(state.creator.selectedCategoryId).toBe('planning_foul')
+    expect(state.creator.categorySuggestionPending).toBe(false)
     expect(state.creator.categorySelectionSource).toBe('manual')
   })
 
@@ -197,6 +221,7 @@ describe('appReducer application flow', () => {
     expect(nextState.creator.playerName).toBe('')
     expect(nextState.creator.selectedCategoryId).toBeNull()
     expect(nextState.creator.suggestedCategoryId).toBeNull()
+    expect(nextState.creator.categorySuggestionPending).toBe(false)
     expect(nextState.creatorEntryFocus).toBe('message')
     expect(nextState.session.generatedCount).toBe(1)
     expect(
@@ -221,11 +246,16 @@ describe('appReducer application flow', () => {
     expect(clearedState.creator.selectedCategoryId).toBeNull()
     expect(clearedState.creator.suggestedCategoryId).toBeNull()
     expect(clearedState.creator.suggestionConfidence).toBe('none')
+    expect(clearedState.creator.categorySuggestionPending).toBe(
+      false,
+    )
     expect(clearedState.creator.categorySelectionSource).toBeNull()
   })
 
   it('clears suggestion-derived selection when locale changes', () => {
-    let state = appReducer(createInitialAppState('en'), {
+    let state = createInitialAppState('en')
+    state.creator.message = 'Okay.'
+    state = appReducer(state, {
       type: 'APPLY_CATEGORY_SUGGESTION',
       categoryId: 'dry_texting',
       confidence: 'high',
@@ -239,6 +269,7 @@ describe('appReducer application flow', () => {
     expect(state.creator.locale).toBe('sr')
     expect(state.creator.selectedCategoryId).toBeNull()
     expect(state.creator.suggestedCategoryId).toBeNull()
+    expect(state.creator.categorySuggestionPending).toBe(true)
     expect(state.creator.categorySelectionSource).toBeNull()
   })
 
@@ -256,6 +287,9 @@ describe('appReducer application flow', () => {
     expect(englishState.creator.locale).toBe('en')
     expect(englishState.creator.selectedCategoryId).toBe(
       'planning_foul',
+    )
+    expect(englishState.creator.categorySuggestionPending).toBe(
+      false,
     )
   })
 

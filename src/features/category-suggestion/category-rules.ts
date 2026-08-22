@@ -13,6 +13,7 @@ export type CategoryRule = {
   values: readonly string[]
   priority: number
   suggest?: boolean
+  verdictSpecific?: boolean
 }
 
 export const categoryRules = [
@@ -69,7 +70,6 @@ export const categoryRules = [
       'evo sad cu',
     ],
     priority: 62,
-    suggest: false,
   },
   {
     triggerId: 'sr_on_my_way',
@@ -135,7 +135,16 @@ export const categoryRules = [
     match: 'exact',
     values: ['dobro'],
     priority: 60,
-    suggest: false,
+  },
+  {
+    triggerId: 'sr_dry_acknowledgment',
+    locale: 'sr',
+    categoryId: 'dry_texting',
+    confidence: 'low',
+    match: 'exact',
+    values: ['aha'],
+    priority: 55,
+    verdictSpecific: false,
   },
   {
     triggerId: 'sr_just_saw',
@@ -197,6 +206,21 @@ export const categoryRules = [
       'bio mi je prazan telefon',
     ],
     priority: 105,
+  },
+  {
+    triggerId: 'sr_partial_seen_excuse',
+    locale: 'sr',
+    categoryId: 'suspicious_excuse',
+    confidence: 'low',
+    match: 'exact',
+    values: [
+      'sad vidim',
+      'tek vidim',
+      'nisam video',
+      'nisam videla',
+    ],
+    priority: 70,
+    verdictSpecific: false,
   },
   {
     triggerId: 'sr_you_choose',
@@ -269,6 +293,21 @@ export const categoryRules = [
     priority: 65,
   },
   {
+    triggerId: 'sr_open_choice',
+    locale: 'sr',
+    categoryId: 'planning_foul',
+    confidence: 'low',
+    match: 'exact',
+    values: [
+      'kako hoćeš',
+      'kako hoces',
+      'šta god',
+      'sta god',
+    ],
+    priority: 55,
+    verdictSpecific: false,
+  },
+  {
     triggerId: 'sr_early_jealousy',
     locale: 'sr',
     categoryId: 'emotional_offside',
@@ -314,6 +353,21 @@ export const categoryRules = [
     match: 'phrase',
     values: ['gde ovo vodi', 'kuda ovo vodi'],
     priority: 40,
+  },
+  {
+    triggerId: 'sr_relationship_probe',
+    locale: 'sr',
+    categoryId: 'emotional_offside',
+    confidence: 'low',
+    match: 'exact',
+    values: [
+      'jesmo mi zajedno',
+      'šta je ovo između nas',
+      'sta je ovo izmedju nas',
+      'gde ovo ide',
+    ],
+    priority: 38,
+    verdictSpecific: false,
   },
   {
     triggerId: 'sr_missed_flirt',
@@ -377,7 +431,6 @@ export const categoryRules = [
     match: 'exact',
     values: ['almost ready', 'nearly ready', 'just a little longer'],
     priority: 62,
-    suggest: false,
   },
   {
     triggerId: 'en_on_my_way',
@@ -488,6 +541,20 @@ export const categoryRules = [
     priority: 105,
   },
   {
+    triggerId: 'en_partial_seen_excuse',
+    locale: 'en',
+    categoryId: 'suspicious_excuse',
+    confidence: 'low',
+    match: 'exact',
+    values: [
+      'just seeing this',
+      'seeing this now',
+      'just noticed this',
+    ],
+    priority: 70,
+    verdictSpecific: false,
+  },
+  {
     triggerId: 'en_you_choose',
     locale: 'en',
     categoryId: 'planning_foul',
@@ -540,6 +607,16 @@ export const categoryRules = [
     priority: 65,
   },
   {
+    triggerId: 'en_open_choice',
+    locale: 'en',
+    categoryId: 'planning_foul',
+    confidence: 'low',
+    match: 'exact',
+    values: ['whatever you want'],
+    priority: 55,
+    verdictSpecific: false,
+  },
+  {
     triggerId: 'en_early_jealousy',
     locale: 'en',
     categoryId: 'emotional_offside',
@@ -580,6 +657,16 @@ export const categoryRules = [
       'where is this going between us',
     ],
     priority: 40,
+  },
+  {
+    triggerId: 'en_relationship_probe',
+    locale: 'en',
+    categoryId: 'emotional_offside',
+    confidence: 'low',
+    match: 'exact',
+    values: ['are we together', 'what is this between us'],
+    priority: 38,
+    verdictSpecific: false,
   },
   {
     triggerId: 'en_missed_flirt',

@@ -14,6 +14,7 @@ export type TriggerMatch = Pick<
   | 'priority'
   | 'match'
   | 'suggest'
+  | 'verdictSpecific'
 >
 
 function matchesNormalizedPhrase(
@@ -55,6 +56,7 @@ export function matchCategoryRules(
         priority,
         match,
         suggest,
+        verdictSpecific,
         locale: ruleLocale,
       }) => ({
         triggerId,
@@ -63,6 +65,7 @@ export function matchCategoryRules(
         priority,
         match,
         suggest,
+        verdictSpecific,
         locale: ruleLocale,
       }),
     )

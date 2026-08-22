@@ -9,6 +9,7 @@ import type { RecruitmentSource } from '../features/analytics/analytics-events'
 import { createVerdictKpiTracker } from '../features/analytics/verdict-kpi'
 import { suggestCategory } from '../features/category-suggestion/suggest-category'
 import { CreatorView } from '../features/creator/CreatorView'
+import type { InspirationSetIndex } from '../features/creator/inspiration-sets'
 import {
   hasCreatorErrors,
   validateCreator,
@@ -32,10 +33,14 @@ import {
 import './app.css'
 
 type AppProps = {
+  inspirationSetIndex: InspirationSetIndex
   recruitmentSource?: RecruitmentSource
 }
 
-function App({ recruitmentSource }: AppProps) {
+function App({
+  inspirationSetIndex,
+  recruitmentSource,
+}: AppProps) {
   const [state, dispatch] = useReducer(
     appReducer,
     undefined,
@@ -293,6 +298,7 @@ function App({ recruitmentSource }: AppProps) {
     <CreatorView
       creator={creator}
       entryFocus={creatorEntryFocus}
+      inspirationSetIndex={inspirationSetIndex}
       onLocaleChange={handleLocaleChange}
       onMessageChange={(message) =>
         dispatch({ type: 'SET_MESSAGE', message })

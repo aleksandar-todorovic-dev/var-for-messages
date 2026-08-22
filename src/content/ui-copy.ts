@@ -14,6 +14,33 @@ export const srUiCopy = {
 
   messageLabel: 'Poruka za proveru',
   messagePlaceholder: 'Evo me za pet minuta.',
+  messageExamples: {
+    control: 'Treba ti ideja? Pogledaj primere',
+    sets: [
+      [
+        'Krećem sad.',
+        'K.',
+        'Nisam video poruku.',
+        'Ti biraj.',
+        'Gde ovo vodi?',
+      ],
+      [
+        'Samo što nisam.',
+        'Okej.',
+        'Telefon mi se ugasio.',
+        'Kako hoćeš.',
+        'Ko ti je ona?',
+      ],
+      [
+        'Stižem.',
+        'Mhm.',
+        'Nisam imao signal.',
+        'Ništa od toga.',
+        'Jesmo mi zajedno?',
+      ],
+    ],
+    note: 'Primeri, ne kompletna lista.',
+  },
   playerNameLabel: 'Ime igrača — opciono',
 
   privacyNote:
@@ -26,6 +53,10 @@ export const srUiCopy = {
   changeIncident: 'Promeni incident',
   hideIncidents: 'Sakrij incidente',
   categoryPrompt: 'Šta VAR treba da pregleda?',
+  lowSuggestionGuidance:
+    'Potvrdi ili izaberi drugi incident.',
+  noClearSuggestionGuidance:
+    'VAR nije siguran koji je incident. Izaberi ga ručno — poruka i dalje može na pregled.',
 
   reviewingStatuses: [
     'Pregled poruke…',
@@ -90,6 +121,33 @@ export const enUiCopy = {
 
   messageLabel: 'Message under review',
   messagePlaceholder: 'I’ll be there in five minutes.',
+  messageExamples: {
+    control: 'Need an idea? See examples',
+    sets: [
+      [
+        'Leaving now.',
+        'Okay.',
+        "Didn't see your message.",
+        'You choose.',
+        'Where is this going?',
+      ],
+      [
+        'Almost there.',
+        'Sure.',
+        'My phone died.',
+        'Whatever you want.',
+        'Who is she?',
+      ],
+      [
+        'Be there soon.',
+        'Mhm.',
+        'Had no signal.',
+        'None of those.',
+        'Are we together?',
+      ],
+    ],
+    note: 'Examples, not a complete list.',
+  },
   playerNameLabel: 'Player name — optional',
 
   privacyNote:
@@ -102,6 +160,10 @@ export const enUiCopy = {
   changeIncident: 'Change incident',
   hideIncidents: 'Hide incidents',
   categoryPrompt: 'What should VAR review?',
+  lowSuggestionGuidance:
+    'Confirm it or choose another incident.',
+  noClearSuggestionGuidance:
+    "VAR isn't sure which incident this is. Choose it manually — the message can still be reviewed.",
 
   reviewingStatuses: [
     'Reviewing message…',

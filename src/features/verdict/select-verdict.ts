@@ -54,7 +54,9 @@ export function selectVerdictVariant({
   }
 
   const triggerMatches = matchCategoryRules(locale, message).filter(
-    (match) => match.categoryId === categoryId,
+    (match) =>
+      match.categoryId === categoryId &&
+      match.verdictSpecific !== false,
   )
 
   for (const match of triggerMatches) {

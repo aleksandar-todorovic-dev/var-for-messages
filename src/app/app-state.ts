@@ -24,6 +24,7 @@ export type CreatorState = {
   suggestedCategoryId: IncidentCategoryId | null
   selectedCategoryId: IncidentCategoryId | null
   suggestionConfidence: SuggestionConfidence
+  categorySuggestionPending: boolean
   categorySelectionSource: CategorySelectionSource
 
   errors: CreatorFieldErrors
@@ -54,6 +55,7 @@ export function createInitialAppState(locale: Locale): AppState {
       suggestedCategoryId: null,
       selectedCategoryId: null,
       suggestionConfidence: 'none',
+      categorySuggestionPending: false,
       categorySelectionSource: null,
       errors: {},
     },

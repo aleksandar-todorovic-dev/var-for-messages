@@ -54,6 +54,15 @@ export function CategoryPicker({
   )
   const compactSelection =
     compactHighConfidence || compactManualSelection
+  const showLowSuggestionGuidance = Boolean(
+    suggestedCategory &&
+      suggestionConfidence === 'low' &&
+      selectionSource !== 'manual',
+  )
+  const showNoClearSuggestionGuidance =
+    suggestedCategoryId === null &&
+    suggestionConfidence === 'none' &&
+    selectionSource !== 'manual'
   const compactCategory = compactManualSelection
     ? selectedCategory
     : compactHighConfidence
@@ -132,8 +141,17 @@ export function CategoryPicker({
           <p aria-live="polite">
             <span>{copy.suggestionPrefix}</span>{' '}
             <strong>{suggestedCategory.label}</strong>
+            {showLowSuggestionGuidance ? (
+              <>. {copy.lowSuggestionGuidance}</>
+            ) : null}
           </p>
         </div>
+      ) : null}
+
+      {showNoClearSuggestionGuidance ? (
+        <p className="category-picker__guidance">
+          {copy.noClearSuggestionGuidance}
+        </p>
       ) : null}
 
       {showOptions ? (
