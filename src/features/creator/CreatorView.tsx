@@ -14,6 +14,8 @@ import type {
   Locale,
 } from '../../shared/types/domain'
 import { useReducedMotion } from '../../shared/hooks/useReducedMotion'
+import type { SocialInAppBrowser } from '../browser-compat/detect-social-in-app-browser'
+import { SocialInAppBrowserHandoff } from '../browser-compat/SocialInAppBrowserHandoff'
 import { LegalFooter } from '../legal/LegalFooter'
 import { VerdictCard } from '../verdict/VerdictCard'
 import { CreatorForm } from './CreatorForm'
@@ -23,6 +25,7 @@ import './creator.css'
 import './creator-qa.css'
 
 type CreatorViewProps = {
+  socialInAppBrowser: SocialInAppBrowser | null
   creator: CreatorState
   entryFocus: CreatorEntryFocus
   inspirationSetIndex: InspirationSetIndex
@@ -47,6 +50,7 @@ const demoByLocale = {
 } as const
 
 export function CreatorView({
+  socialInAppBrowser,
   creator,
   entryFocus,
   inspirationSetIndex,
@@ -155,70 +159,80 @@ export function CreatorView({
         />
       </header>
 
-      <section className="creator-intro">
-        <div className="creator-intro__copy">
-          <p className="creator-kicker">
-            {copy.creatorKicker}
-          </p>
-          <h1>{copy.headline}</h1>
-          <p className="creator-intro__support">
-            {copy.supportingText}
-          </p>
-          <button
-            className="creator-intro__cta"
-            type="button"
-            onClick={handleHeroAction}
-          >
-            <span>{copy.heroCta}</span>
-            <span aria-hidden="true">↓</span>
-          </button>
-        </div>
-
-        <figure className="creator-demo">
-          <figcaption>{copy.demoLabel}</figcaption>
-
-          <div className="creator-demo__card">
-            <VerdictCard
-              locale={creator.locale}
-              message={demoConfig.message}
-              reviewLine={demoVariant.reviewLine}
-              sanction={demoVariant.sanction}
-              offense={demoVariant.offense}
-              explanation={demoVariant.explanation}
-              penalty={demoVariant.penalty}
-              caseId={`#${demoVariant.caseCode}`}
-              severity={demoVariant.severity}
-            />
-          </div>
-        </figure>
-      </section>
-
-      <section
-        className="creator-workspace"
-        aria-labelledby="creator-form-title"
-      >
-        <div className="creator-workspace__intro">
-          <p className="creator-kicker">
-            {copy.newIncidentLabel}
-          </p>
-          <h2 id="creator-form-title">
-            {copy.formHeadline}
-          </h2>
-        </div>
-
-        <CreatorForm
-          creator={creator}
-          categories={categories}
-          copy={copy}
-          messageInputRef={messageInputRef}
-          focusMessageOnMount={entryFocus === 'message'}
-          inspirationSetIndex={inspirationSetIndex}
-          onMessageChange={onMessageChange}
-          onPlayerNameChange={onPlayerNameChange}
-          onCategoryChange={onCategoryChange}
-          onSubmit={onSubmit}
+      {socialInAppBrowser ? (
+        <SocialInAppBrowserHandoff
+          browser={socialInAppBrowser}
+          context="creator"
+          copy={copy.socialInAppBrowser}
         />
-      </section>
+      ) : (
+        <>
+          <section className="creator-intro">
+            <div className="creator-intro__copy">
+              <p className="creator-kicker">
+                {copy.creatorKicker}
+              </p>
+              <h1>{copy.headline}</h1>
+              <p className="creator-intro__support">
+                {copy.supportingText}
+              </p>
+              <button
+                className="creator-intro__cta"
+                type="button"
+                onClick={handleHeroAction}
+              >
+                <span>{copy.heroCta}</span>
+                <span aria-hidden="true">↓</span>
+              </button>
+            </div>
+
+            <figure className="creator-demo">
+              <figcaption>{copy.demoLabel}</figcaption>
+
+              <div className="creator-demo__card">
+                <VerdictCard
+                  locale={creator.locale}
+                  message={demoConfig.message}
+                  reviewLine={demoVariant.reviewLine}
+                  sanction={demoVariant.sanction}
+                  offense={demoVariant.offense}
+                  explanation={demoVariant.explanation}
+                  penalty={demoVariant.penalty}
+                  caseId={`#${demoVariant.caseCode}`}
+                  severity={demoVariant.severity}
+                />
+              </div>
+            </figure>
+          </section>
+
+          <section
+            className="creator-workspace"
+            aria-labelledby="creator-form-title"
+          >
+            <div className="creator-workspace__intro">
+              <p className="creator-kicker">
+                {copy.newIncidentLabel}
+              </p>
+              <h2 id="creator-form-title">
+                {copy.formHeadline}
+              </h2>
+            </div>
+
+            <CreatorForm
+              creator={creator}
+              categories={categories}
+              copy={copy}
+              messageInputRef={messageInputRef}
+              focusMessageOnMount={entryFocus === 'message'}
+              inspirationSetIndex={inspirationSetIndex}
+              onMessageChange={onMessageChange}
+              onPlayerNameChange={onPlayerNameChange}
+              onCategoryChange={onCategoryChange}
+              onSubmit={onSubmit}
+            />
+          </section>
+        </>
+      )}
 
       <LegalFooter locale={creator.locale} />
     </main>

@@ -2,12 +2,14 @@ import {
   useEffect,
   useReducer,
   useRef,
+  useState,
 } from 'react'
 import { getUiCopy } from '../content'
 import { trackLandingViewed } from '../features/analytics/analytics'
 import type { RecruitmentSource } from '../features/analytics/analytics-events'
 import { createVerdictKpiTracker } from '../features/analytics/verdict-kpi'
 import { suggestCategory } from '../features/category-suggestion/suggest-category'
+import { detectSocialInAppBrowser } from '../features/browser-compat/detect-social-in-app-browser'
 import { CreatorView } from '../features/creator/CreatorView'
 import type { InspirationSetIndex } from '../features/creator/inspiration-sets'
 import {
@@ -41,6 +43,9 @@ function App({
   inspirationSetIndex,
   recruitmentSource,
 }: AppProps) {
+  const [socialInAppBrowser] = useState(() =>
+    detectSocialInAppBrowser(window.navigator.userAgent),
+  )
   const [state, dispatch] = useReducer(
     appReducer,
     undefined,
@@ -249,6 +254,7 @@ function App({
   if (view === 'verdict' && generatedVerdict) {
     return (
       <VerdictView
+        socialInAppBrowser={socialInAppBrowser}
         verdict={generatedVerdict}
         onEdit={() => {
           verdictKpis.finishLifecycle()
@@ -296,6 +302,7 @@ function App({
 
   return (
     <CreatorView
+      socialInAppBrowser={socialInAppBrowser}
       creator={creator}
       entryFocus={creatorEntryFocus}
       inspirationSetIndex={inspirationSetIndex}
