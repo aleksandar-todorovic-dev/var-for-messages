@@ -1,6 +1,6 @@
 # Third-Party Notices
 
-VAR for Messages 0.1.0 distributes the following production runtime software and font material:
+VAR for Messages 0.1.1 distributes the following production runtime software and font material:
 
 - `@fontsource/barlow-condensed` 5.3.0 — SIL Open Font License 1.1 (the production bundle includes the Latin Extended 900-weight assets)
 - `@fontsource/inter` 5.3.0 — SIL Open Font License 1.1 (the production bundle includes the Latin Extended 400, 600, 700, and 800-weight assets)
