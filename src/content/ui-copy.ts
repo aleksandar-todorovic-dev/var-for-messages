@@ -64,6 +64,28 @@ export const srUiCopy = {
     'Konačna odluka',
   ],
 
+  socialInAppBrowser: {
+    creator: {
+      kicker: 'PROVERA BROWSERA',
+      heading: 'Otvori VAR u svom browseru.',
+      body:
+        'Instagram/TikTok pregledač može da blokira deljenje i preuzimanje VAR presude. Otvori ovu stranicu u svom browseru pre nego što uneseš poruku.',
+    },
+    verdict: {
+      kicker: 'PROVERA BROWSERA',
+      heading: 'Otvori VAR u svom browseru.',
+      body:
+        'Ovaj pregledač ne podržava pouzdano deljenje ili preuzimanje. Otvori VAR u svom browseru i napravi presudu tamo. Ova presuda se neće automatski preneti.',
+    },
+    instructions: {
+      instagram:
+        'U Instagramu otvori meni ⋯ i izaberi opciju „Otvori u spoljnom pregledaču“.',
+      tiktok:
+        'U TikToku otvori meni pregledača (⋯ ili Share) i izaberi opciju za otvaranje stranice u svom browseru.',
+    },
+    address: 'varformessages.com',
+  },
+
   share: 'Podeli presudu',
   download: 'Preuzmi PNG',
   edit: 'Izmeni incident',
@@ -170,6 +192,28 @@ export const enUiCopy = {
     'Checking incident…',
     'Final decision',
   ],
+
+  socialInAppBrowser: {
+    creator: {
+      kicker: 'BROWSER CHECK',
+      heading: 'Open VAR in your browser.',
+      body:
+        "Instagram/TikTok's in-app browser may block sharing or downloading your VAR verdict. Open this page in your browser before entering a message.",
+    },
+    verdict: {
+      kicker: 'BROWSER CHECK',
+      heading: 'Open VAR in your browser.',
+      body:
+        "Share/Download isn't reliable in this in-app browser. Open VAR in your browser and create the verdict there. This verdict won't transfer automatically.",
+    },
+    instructions: {
+      instagram:
+        "Open Instagram's browser menu and choose the option to open the page in your external browser.",
+      tiktok:
+        "Open TikTok's browser menu (⋯ or Share) and choose the option to open the page in your browser.",
+    },
+    address: 'varformessages.com',
+  },
 
   share: 'Share ruling',
   download: 'Download PNG',

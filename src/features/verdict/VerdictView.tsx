@@ -8,6 +8,8 @@ import {
   getUiCopy,
 } from '../../content'
 import type { GeneratedVerdict } from '../../shared/types/domain'
+import type { SocialInAppBrowser } from '../browser-compat/detect-social-in-app-browser'
+import { SocialInAppBrowserHandoff } from '../browser-compat/SocialInAppBrowserHandoff'
 import {
   downloadVerdictFile,
 } from '../export/create-verdict-image'
@@ -24,6 +26,7 @@ import {
 import './verdict-view.css'
 
 type VerdictViewProps = {
+  socialInAppBrowser: SocialInAppBrowser | null
   verdict: GeneratedVerdict
   onEdit: () => void
   onShareCompleted: () => void
@@ -35,6 +38,7 @@ type VerdictViewProps = {
 type ActiveAction = 'share' | 'download' | null
 
 export function VerdictView({
+  socialInAppBrowser,
   verdict,
   onEdit,
   onShareCompleted,
@@ -181,7 +185,9 @@ export function VerdictView({
       <section className="verdict-view__layout">
         <div className="verdict-view__card">
           <h1
-            ref={headingRef}
+            ref={
+              socialInAppBrowser ? undefined : headingRef
+            }
             className="verdict-view__announcement"
             tabIndex={-1}
           >
@@ -200,60 +206,71 @@ export function VerdictView({
           </div>
 
           <div className="verdict-view__primary-action-zone">
-            <div className="verdict-view__buttons verdict-view__buttons--primary">
-              <button
-                className="verdict-view__button verdict-view__button--share"
-                type="button"
-                disabled={!imageReady || actionBusy}
-                onClick={handleShare}
-              >
-                <span>
-                  {activeAction === 'share'
-                    ? copy.actionStatus.sharing
-                    : copy.share}
-                </span>
-                <span aria-hidden="true">↗</span>
-              </button>
+            {socialInAppBrowser ? (
+              <SocialInAppBrowserHandoff
+                browser={socialInAppBrowser}
+                context="verdict"
+                copy={copy.socialInAppBrowser}
+                headingRef={headingRef}
+              />
+            ) : (
+              <>
+                <div className="verdict-view__buttons verdict-view__buttons--primary">
+                  <button
+                    className="verdict-view__button verdict-view__button--share"
+                    type="button"
+                    disabled={!imageReady || actionBusy}
+                    onClick={handleShare}
+                  >
+                    <span>
+                      {activeAction === 'share'
+                        ? copy.actionStatus.sharing
+                        : copy.share}
+                    </span>
+                    <span aria-hidden="true">↗</span>
+                  </button>
 
-              <button
-                className="verdict-view__button verdict-view__button--download"
-                type="button"
-                disabled={!imageReady || actionBusy}
-                onClick={handleDownload}
-              >
-                <span>
-                  {activeAction === 'download'
-                    ? copy.actionStatus.preparing
-                    : copy.download}
-                </span>
-                <span aria-hidden="true">↓</span>
-              </button>
-            </div>
-
-            <div
-              className="verdict-view__status"
-              aria-live="polite"
-            >
-              {imageStatus === 'preparing' ? (
-                <p>{copy.actionStatus.preparing}</p>
-              ) : null}
-
-              {imageStatus === 'error' || imageError ? (
-                <div className="verdict-view__status-error">
-                  <p>{copy.errors.export}</p>
-                  <button type="button" onClick={handleRetry}>
-                    {copy.actionStatus.retry}
+                  <button
+                    className="verdict-view__button verdict-view__button--download"
+                    type="button"
+                    disabled={!imageReady || actionBusy}
+                    onClick={handleDownload}
+                  >
+                    <span>
+                      {activeAction === 'download'
+                        ? copy.actionStatus.preparing
+                        : copy.download}
+                    </span>
+                    <span aria-hidden="true">↓</span>
                   </button>
                 </div>
-              ) : null}
 
-              {actionMessage ? <p>{actionMessage}</p> : null}
-              {actionError ? (
-                <p className="verdict-view__status-error-copy">
-                  {actionError}
-                </p>
-              ) : null}
-            </div>
+                <div
+                  className="verdict-view__status"
+                  aria-live="polite"
+                >
+                  {imageStatus === 'preparing' ? (
+                    <p>{copy.actionStatus.preparing}</p>
+                  ) : null}
+
+                  {imageStatus === 'error' || imageError ? (
+                    <div className="verdict-view__status-error">
+                      <p>{copy.errors.export}</p>
+                      <button type="button" onClick={handleRetry}>
+                        {copy.actionStatus.retry}
+                      </button>
+                    </div>
+                  ) : null}
+
+                  {actionMessage ? <p>{actionMessage}</p> : null}
+                  {actionError ? (
+                    <p className="verdict-view__status-error-copy">
+                      {actionError}
+                    </p>
+                  ) : null}
+                </div>
+              </>
+            )}
           </div>
 
           <div className="verdict-view__buttons verdict-view__buttons--secondary">

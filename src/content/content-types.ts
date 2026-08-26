@@ -76,6 +76,24 @@ export type UiCopy = {
 
   reviewingStatuses: readonly [string, string, string]
 
+  socialInAppBrowser: {
+    creator: {
+      kicker: string
+      heading: string
+      body: string
+    }
+    verdict: {
+      kicker: string
+      heading: string
+      body: string
+    }
+    instructions: {
+      instagram: string
+      tiktok: string
+    }
+    address: string
+  }
+
   share: string
   download: string
   edit: string

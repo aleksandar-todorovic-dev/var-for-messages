@@ -1,0 +1,164 @@
+.social-browser-handoff {
+  display: grid;
+  min-width: 0;
+}
+
+.social-browser-handoff--creator {
+  grid-template-columns: minmax(0, 1fr) minmax(18rem, 0.62fr);
+  align-items: center;
+  gap: clamp(2.5rem, 8vw, 7rem);
+  padding-block: clamp(4rem, 11vw, 8rem);
+}
+
+.social-browser-handoff__lead {
+  min-width: 0;
+}
+
+.social-browser-handoff__kicker {
+  margin: 0 0 0.85rem;
+  color: #78a9ff;
+  font-size: 0.73rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.social-browser-handoff__heading {
+  max-width: 11ch;
+  margin: 0;
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: clamp(3.2rem, 8vw, 7rem);
+  font-weight: 900;
+  line-height: 0.88;
+  letter-spacing: -0.04em;
+}
+
+.social-browser-handoff__body {
+  max-width: 42rem;
+  margin: 1.4rem 0 0;
+  color: #b6b6b0;
+  font-size: clamp(1rem, 2vw, 1.2rem);
+  line-height: 1.55;
+}
+
+.social-browser-handoff__instruction {
+  position: relative;
+  min-width: 0;
+  overflow: hidden;
+  padding: clamp(1.5rem, 4vw, 2.5rem);
+  color: #11110f;
+  background:
+    linear-gradient(rgb(17 17 15 / 0.025) 1px, transparent 1px),
+    #f1eadb;
+  background-size: 100% 2.25rem;
+  border: 1px solid rgb(241 234 219 / 0.65);
+}
+
+.social-browser-handoff__instruction::before {
+  position: absolute;
+  inset-block: 0;
+  left: 0;
+  width: 0.4rem;
+  background: #78a9ff;
+  content: "";
+}
+
+.social-browser-handoff__platform {
+  margin: 0 0 1rem;
+  color: #315b9f;
+  font-size: 0.72rem;
+  font-weight: 900;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.social-browser-handoff__instruction-copy {
+  margin: 0;
+  font-size: clamp(1rem, 2vw, 1.15rem);
+  font-weight: 700;
+  line-height: 1.55;
+}
+
+.social-browser-handoff__address {
+  display: flex;
+  align-items: baseline;
+  gap: 0.7rem;
+  margin: 1.75rem 0 0;
+  padding-top: 1rem;
+  border-top: 1px solid rgb(17 17 15 / 0.2);
+  overflow-wrap: anywhere;
+}
+
+.social-browser-handoff__address span {
+  color: #315b9f;
+  font-weight: 900;
+}
+
+.social-browser-handoff__address strong {
+  min-width: 0;
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: clamp(1.45rem, 4vw, 2rem);
+  font-weight: 900;
+  letter-spacing: -0.01em;
+}
+
+.social-browser-handoff--verdict {
+  gap: 1.25rem;
+}
+
+.social-browser-handoff--verdict
+  .social-browser-handoff__heading {
+  max-width: 13ch;
+  font-size: clamp(2.4rem, 5vw, 3.75rem);
+  line-height: 0.92;
+}
+
+.social-browser-handoff--verdict
+  .social-browser-handoff__body {
+  margin-top: 1rem;
+  color: #c4c4bd;
+  font-size: 0.94rem;
+}
+
+.social-browser-handoff--verdict
+  .social-browser-handoff__instruction {
+  padding: 1.35rem 1.25rem 1.35rem 1.55rem;
+}
+
+.social-browser-handoff--verdict
+  .social-browser-handoff__instruction-copy {
+  font-size: 0.9rem;
+}
+
+.social-browser-handoff--verdict
+  .social-browser-handoff__address {
+  margin-top: 1.25rem;
+}
+
+@media (max-width: 850px) {
+  .social-browser-handoff--creator {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .social-browser-handoff--creator
+    .social-browser-handoff__instruction {
+    width: min(100%, 38rem);
+  }
+}
+
+@media (max-width: 620px) {
+  .social-browser-handoff--creator {
+    gap: 2.25rem;
+    padding-block: 3.5rem 2rem;
+  }
+
+  .social-browser-handoff--creator
+    .social-browser-handoff__heading {
+    font-size: clamp(3.1rem, 16vw, 5rem);
+  }
+
+  .social-browser-handoff--creator
+    .social-browser-handoff__instruction {
+    padding: 1.35rem 1.1rem 1.35rem 1.45rem;
+  }
+}
