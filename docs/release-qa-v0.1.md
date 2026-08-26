@@ -1,12 +1,12 @@
 # VAR for Messages — Release QA v0.1
 
 **Status:** Closed for current free remote hybrid pilot
-**Reconciled through:** 19 August 2026
+**Reconciled through:** 26 August 2026
 **Historical immutable tag:** `v0.1.0` → `7df4af4efb4a5c9f575d55c5896f2ec6ed2f2618`
-**Last code-changing production baseline:** `3076c1a10a116a6593aa65f36dfe6609617880f8`
+**Last code-changing application-behavior baseline:** `ec34dc87febd9e46751238456870f861b3b45a74`
 **Production:** `https://varformessages.com/`
 **Repository:** `aleksandar-todorovic-dev/var-for-messages` — private
-**Package/app version:** `0.1.0`
+**Package/app version:** `0.1.1`
 
 ---
 
@@ -14,7 +14,7 @@
 
 The current production build is technically cleared for the free remote hybrid pilot.
 
-No critical runtime, export, responsive, accessibility or content-render defect is open.
+No critical runtime, export, responsive, accessibility or content-render defect is open. The reproduced Instagram Android in-app-browser Share/Download dead-end is closed by the v0.1.1 external-browser handoff and has passed physical production QA.
 
 A physical iPhone Safari test was not available and is recorded as an accepted non-blocking closed-pilot compatibility risk.
 
@@ -24,7 +24,7 @@ Do not interpret this QA pass as product validation.
 
 # 2. Source / deployment integrity
 
-- [x] Last code-changing production baseline is `3076c1a10a116a6593aa65f36dfe6609617880f8`.
+- [x] Last code-changing application-behavior baseline is `ec34dc87febd9e46751238456870f861b3b45a74`.
 - [x] GitHub Actions CI completed successfully for that baseline.
 - [x] Vercel production deployment for that baseline is `READY`.
 - [x] Deployment source is GitHub branch `main`.
@@ -41,16 +41,16 @@ Do not interpret this QA pass as product validation.
 
 # 3. Local quality gates
 
-Current pre-pilot quality gate:
+Current v0.1.1 compatibility quality gate:
 
 - [x] ESLint passes.
-- [x] Vitest passes: **14 test files / 115 tests**.
+- [x] Vitest passes: **17 test files / 253 tests**.
 - [x] TypeScript production build passes.
 - [x] Vite production build passes.
 - [x] `git diff --check` passes.
-- [x] PR #3 / GitHub CI passed before merge.
+- [x] GitHub Actions CI passes for production merge `ec34dc8`.
 
-Historical release evidence remains useful: the earlier release-completion gate had 9 test files / 48 tests; PR #1 behavioral hardening later reached 9 files / 77 tests with no confirmed P0–P3. The current gate above supersedes those counts as the active test total.
+Historical release evidence remains useful: the earlier release-completion gate had 9 test files / 48 tests; PR #1 behavioral hardening later reached 9 files / 77 tests; the privacy/readiness gate reached 14 files / 115 tests; and the 22 August creator-guidance gate reached 15 files / 236 tests. The 17-file / 253-test gate above supersedes those counts as the active total.
 
 ---
 
@@ -72,6 +72,9 @@ Historical release evidence remains useful: the earlier release-completion gate 
 - [x] Unsupported Share download fallback.
 - [x] Share cancellation returns safely.
 - [x] Export retry/failure state remains recoverable.
+- [x] Known Instagram/TikTok in-app browsers receive a preflight external-browser handoff before message entry.
+- [x] Known-IAB verdict edge keeps the verdict visible while replacing Share/Download with the compatibility handoff.
+- [x] Ordinary browser Share/Download behavior remains unchanged.
 
 ---
 
@@ -262,6 +265,24 @@ Recorded QA motion values were effectively reduced to minimal durations.
 - [x] Cancelling native Share returns safely.
 - [x] Sent PNG remains readable.
 
+## Instagram Android in-app browser — physical device / production
+
+- [x] Profile link opens the production site inside Instagram's embedded browser.
+- [x] Instagram UA is classified as the known Instagram IAB.
+- [x] Creator form is withheld before private message entry.
+- [x] Localized Instagram-specific handoff is shown.
+- [x] Instagram menu → external browser opens the same production site in the device browser.
+- [x] Compatibility warning disappears in the ordinary external browser.
+- [x] Creator → verdict flow works after handoff.
+- [x] Native Share works after handoff.
+- [x] PNG Download works after handoff.
+- [x] A generated result was successfully sent back through Instagram during owner QA.
+- [x] No raw UA telemetry, new analytics field, new storage key, redirect service or cross-browser draft transfer was introduced.
+
+Application-behavior baseline: `ec34dc87febd9e46751238456870f861b3b45a74`.
+
+TikTok detector/unit/headless coverage is included in v0.1.1, but physical TikTok profile-link IAB QA remains pending because the new account does not yet expose a clickable Website field.
+
 ## WebKit / iPhone profile
 
 Final compatibility sanity:
@@ -392,6 +413,16 @@ share_failed
 - [x] Inspected verdict payload contained only website ID, path `/`, event name, locale and fixed category.
 - [x] Known blocker/DNT undercount accepted; no bypass/proxy planned.
 
+## v0.1.1 social-IAB privacy/compatibility delta — 26 August 2026
+
+- [x] Detection reads the browser user-agent locally only to classify `instagram | tiktok | null`.
+- [x] Classification is not persisted.
+- [x] Raw user-agent is not added to VAR analytics events/properties.
+- [x] No new cookie, localStorage key, provider, SDK, backend, redirect service or user identifier.
+- [x] Message/player-name client-side privacy contract is unchanged.
+- [x] Public Privacy Notice / Terms require no wording change for this bounded compatibility correction.
+- [x] No production runtime dependency was added; third-party license bodies are unchanged.
+
 ## Legal / operational
 
 - [x] Vercel Hobby confirmed.
@@ -439,13 +470,13 @@ v0.1.0
 
 remains immutable.
 
-The pilot code baseline is ahead of the historical tag and includes content/routing, metadata, keyboard-accessibility, visual-hierarchy and pre-pilot privacy/analytics fixes. Later documentation-only commits may move `main` without changing that application baseline.
+The historical `v0.1.0` tag remains immutable. The bounded, reproduced social in-app-browser compatibility blocker justifies the `v0.1.1` patch release.
 
-Current package/app version remains `0.1.0`.
+Current package/app version is `0.1.1`.
 
-No version-only patch is required before the closed pilot.
+The last code-changing application-behavior baseline is `ec34dc87febd9e46751238456870f861b3b45a74`. Release/documentation-only reconciliation commits may move `main` without changing that behavior baseline.
 
-Use the next patch release only for a bounded evidence-based correction if needed.
+Use a later patch release only for another bounded evidence-based correction if needed.
 
 ---
 

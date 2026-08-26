@@ -6,10 +6,10 @@ VAR for Messages is a mobile-first React app that turns an ordinary chat message
 
 ## Current status
 
-The current free remote-pilot implementation baseline is:
+The current application-behavior baseline is:
 
 ```text
-3076c1a10a116a6593aa65f36dfe6609617880f8
+ec34dc87febd9e46751238456870f861b3b45a74
 ```
 
 The v0.1 product flow is:
@@ -32,6 +32,7 @@ The app currently supports:
 - exact `1080 × 1350` PNG export;
 - native PNG sharing where supported;
 - download fallback;
+- preflight Instagram/TikTok in-app-browser handoff in known embedded-browser environments;
 - reduced-motion behavior;
 - client-side verdict generation with no message backend;
 - bilingual Privacy / Terms / no-affiliation / contact surfaces;
@@ -90,7 +91,7 @@ npm run test:run
 npm run build
 ```
 
-Current pre-pilot gate at the production merge: **14 test files / 115 tests PASS**, plus lint, TypeScript/Vite build, `git diff --check`, GitHub Actions and live production privacy-payload QA.
+Current compatibility gate: **17 test files / 253 tests PASS**, plus lint, TypeScript/Vite build, `git diff --check`, GitHub Actions, live production privacy-payload QA and physical Android Instagram-IAB → external-browser → Share/Download QA.
 
 ## Source structure
 
@@ -102,6 +103,7 @@ src/
     en/
   features/
     analytics/
+    browser-compat/
     category-suggestion/
     creator/
     export/
@@ -131,4 +133,4 @@ Commercial monetization remains blocked pending the project’s separate profess
 
 GitHub Actions runs lint, tests and the production build for pull requests and pushes to `main`.
 
-The historical `v0.1.0` tag remains immutable at `7df4af4efb4a5c9f575d55c5896f2ec6ed2f2618`. The last code-changing pilot baseline is `3076c1a10a116a6593aa65f36dfe6609617880f8`; later documentation-only commits may move `main` without changing the pilot application behavior.
+The historical `v0.1.0` tag remains immutable at `7df4af4efb4a5c9f575d55c5896f2ec6ed2f2618`. The `v0.1.1` compatibility release formalizes the social in-app-browser handoff. The last code-changing application-behavior baseline is `ec34dc87febd9e46751238456870f861b3b45a74`; later release/documentation-only commits may move `main` without changing that application behavior.
